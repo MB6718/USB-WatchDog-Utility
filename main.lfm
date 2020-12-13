@@ -1,12 +1,12 @@
 object fMain: TfMain
-  Left = 725
-  Height = 324
-  Top = 435
+  Left = 730
+  Height = 325
+  Top = 438
   Width = 480
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'USB WatchDog v0.1'
-  ClientHeight = 324
+  ClientHeight = 325
   ClientWidth = 480
   Constraints.MaxWidth = 480
   Constraints.MinWidth = 480
@@ -14,30 +14,346 @@ object fMain: TfMain
   LCLVersion = '1.8.4.0'
   object PageControl1: TPageControl
     Left = 0
-    Height = 292
+    Height = 293
     Top = 0
     Width = 480
-    ActivePage = TabSheet1
+    ActivePage = MainTabSheet
     Align = alClient
     TabIndex = 0
     TabOrder = 0
-    object TabSheet1: TTabSheet
+    object MainTabSheet: TTabSheet
       Caption = 'Main'
+      ClientHeight = 265
+      ClientWidth = 472
+      object ConnectionGroupBox: TGroupBox
+        AnchorSideLeft.Control = MainTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = MainTabSheet
+        Left = 16
+        Height = 74
+        Top = 8
+        Width = 440
+        BorderSpacing.Top = 8
+        ClientHeight = 54
+        ClientWidth = 436
+        Constraints.MinHeight = 74
+        Constraints.MinWidth = 440
+        TabOrder = 0
+        object PortSelectorComboBox: TComboBox
+          AnchorSideLeft.Control = IndicatorShape
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = ConnectionGroupBox
+          AnchorSideRight.Control = ReScanButton
+          Left = 57
+          Height = 23
+          Top = 3
+          Width = 232
+          Anchors = [akTop, akLeft, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 3
+          BorderSpacing.Right = 10
+          ItemHeight = 15
+          Sorted = True
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object IndicatorShape: TShape
+          AnchorSideLeft.Control = ConnectionGroupBox
+          AnchorSideTop.Control = ConnectionGroupBox
+          Left = 15
+          Height = 26
+          Top = 2
+          Width = 32
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 2
+          Brush.Color = clSilver
+          Pen.Color = clGray
+          Shape = stRoundRect
+        end
+        object StartStopButton: TBitBtn
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = ConnectionGroupBox
+          AnchorSideRight.Control = ConnectionGroupBox
+          AnchorSideRight.Side = asrBottom
+          Left = 378
+          Height = 26
+          Top = 2
+          Width = 43
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 15
+          Enabled = False
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000064000000640000000000000000000000000000000000
+            000000000000000000001E8F3BFF1A8C36FF0000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000001C9139FF168E34FF128B30FF00000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000001A9238FF139031FF0E8E2DFF0A8B2AFF000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000189536FF119331FF0B8F2AFF068C27FF038924FF0000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000179837FF0F9630FF0A922BFF038E26FF008A21FF0086
+            21FF000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000169A35FF0E982FFF08952BFF019123FF008B23FF0086
+            21FF008521FF0000000000000000000000000000000000000000000000000000
+            00000000000000000000169D37FF0E9B31FF06972AFF019425FF008C23FF0088
+            20FF008722FF028723FF00000000000000000000000000000000000000000000
+            0000000000000000000015A038FF0D9F31FF069B2BFF019725FF009024FF008B
+            23FF008B21FF048A25FF0A8828FF000000000000000000000000000000000000
+            0000000000000000000016A139FF0EA132FF089D2DFF039927FF019525FF0091
+            22FF038D24FF078B26FF0E8A2BFF000000000000000000000000000000000000
+            0000000000000000000017A23AFF10A132FF0B9F2FFF069B2BFF039828FF0494
+            28FF089029FF0B8E2CFF00000000000000000000000000000000000000000000
+            0000000000000000000018A43AFF12A236FF0EA030FF0A9D2EFF09992BFF0A95
+            2DFF0D912CFF0000000000000000000000000000000000000000000000000000
+            000000000000000000001CA33DFF16A339FF13A136FF109D33FF0E9931FF1097
+            31FF000000000000000000000000000000000000000000000000000000000000
+            000000000000000000001DA33EFF1AA23BFF17A039FF169D37FF159A35FF0000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000021A241FF1DA13EFF1B9F3AFF1B9C3BFF000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000023A041FF239F40FF209D3EFF00000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000269D45FF259D43FF0000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000
+          }
+          Margin = 0
+          Spacing = 0
+          TabOrder = 1
+        end
+        object ReScanButton: TButton
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = ConnectionGroupBox
+          AnchorSideRight.Control = StartStopButton
+          Left = 299
+          Height = 26
+          Top = 2
+          Width = 69
+          Anchors = [akTop, akRight]
+          BorderSpacing.Top = 2
+          Caption = 'ReScan'
+          TabOrder = 2
+        end
+        object DeviceStatusLabel: TLabel
+          AnchorSideLeft.Control = ConnectionGroupBox
+          AnchorSideTop.Side = asrBottom
+          AnchorSideBottom.Control = ConnectionGroupBox
+          AnchorSideBottom.Side = asrBottom
+          Left = 15
+          Height = 15
+          Top = 34
+          Width = 153
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 15
+          BorderSpacing.Bottom = 5
+          Caption = 'Device status: NotConnected'
+          ParentColor = False
+        end
+        object FirmwareVersionLabel: TLabel
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ConnectionGroupBox
+          AnchorSideRight.Side = asrBottom
+          AnchorSideBottom.Control = ConnectionGroupBox
+          AnchorSideBottom.Side = asrBottom
+          Left = 201
+          Height = 15
+          Top = 34
+          Width = 220
+          Anchors = [akRight, akBottom]
+          AutoSize = False
+          BorderSpacing.Right = 15
+          BorderSpacing.Bottom = 5
+          Caption = 'Device firmware version: undefined'
+          ParentColor = False
+        end
+      end
+      object PingGroupBox: TGroupBox
+        AnchorSideLeft.Control = MainTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = ConnectionGroupBox
+        AnchorSideTop.Side = asrBottom
+        Left = 16
+        Height = 102
+        Top = 87
+        Width = 440
+        BorderSpacing.Top = 5
+        ClientHeight = 82
+        ClientWidth = 436
+        Constraints.MinWidth = 440
+        ParentColor = False
+        TabOrder = 1
+        object NetMonitoringCheckBox: TCheckBox
+          AnchorSideLeft.Control = PingGroupBox
+          AnchorSideTop.Control = PingGroupBox
+          Left = 15
+          Height = 19
+          Top = 3
+          Width = 128
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 3
+          Caption = 'Network monitoring'
+          TabOrder = 0
+        end
+        object NetAddressEdit: TEdit
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = NetMonitoringCheckBox
+          AnchorSideTop.Side = asrCenter
+          AnchorSideRight.Control = PingGroupBox
+          AnchorSideRight.Side = asrBottom
+          Left = 157
+          Height = 23
+          Top = 1
+          Width = 264
+          Anchors = [akTop, akRight]
+          BorderSpacing.Right = 15
+          TabOrder = 1
+          Text = 'paste here ip or dns address'
+        end
+        object PingTimeoutTrackBar: TTrackBar
+          AnchorSideLeft.Control = PingTimeoutLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = PingTimeoutLabel
+          AnchorSideRight.Control = PingTimeoutSecLabel
+          Left = 87
+          Height = 24
+          Top = 32
+          Width = 291
+          Frequency = 50
+          Max = 3000
+          Min = 1
+          Position = 1000
+          TickStyle = tsNone
+          Anchors = [akTop, akLeft, akRight]
+          Enabled = False
+          TabOrder = 2
+        end
+        object PingTimeoutSecLabel: TLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = PingTimeoutLabel
+          AnchorSideRight.Control = NetAddressEdit
+          AnchorSideRight.Side = asrBottom
+          Left = 378
+          Height = 15
+          Top = 32
+          Width = 43
+          Anchors = [akTop, akRight]
+          Caption = '1000 ms'
+          Enabled = False
+          ParentColor = False
+        end
+        object PingTimeoutLabel: TLabel
+          AnchorSideLeft.Control = NetMonitoringCheckBox
+          AnchorSideTop.Control = NetAddressEdit
+          AnchorSideTop.Side = asrBottom
+          Left = 15
+          Height = 15
+          Top = 32
+          Width = 72
+          BorderSpacing.Top = 8
+          Caption = 'Ping timeout:'
+          Enabled = False
+          ParentColor = False
+        end
+        object PingStatusLabel: TLabel
+          AnchorSideLeft.Control = PingTimeoutLabel
+          AnchorSideTop.Control = PingTimeoutLabel
+          AnchorSideTop.Side = asrBottom
+          Left = 15
+          Height = 15
+          Top = 58
+          Width = 61
+          BorderSpacing.Top = 11
+          Caption = 'Ping status:'
+          Enabled = False
+          ParentColor = False
+        end
+        object PingStatusIndicatorLabel: TLabel
+          AnchorSideLeft.Control = PingStatusLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = PingStatusLabel
+          Left = 91
+          Height = 15
+          Top = 58
+          Width = 45
+          BorderSpacing.Left = 15
+          Caption = 'Disabled'
+          Font.Color = clGray
+          ParentColor = False
+          ParentFont = False
+        end
+      end
+      object ButtonsGroupBox: TGroupBox
+        AnchorSideLeft.Control = MainTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = PingGroupBox
+        AnchorSideTop.Side = asrBottom
+        Left = 16
+        Height = 60
+        Top = 194
+        Width = 440
+        BorderSpacing.Top = 5
+        ClientHeight = 40
+        ClientWidth = 436
+        Constraints.MaxHeight = 60
+        Constraints.MinHeight = 60
+        Constraints.MinWidth = 440
+        Enabled = False
+        TabOrder = 2
+        object SoftResetButton: TButton
+          AnchorSideTop.Control = HardResetButton
+          AnchorSideRight.Control = HardResetButton
+          Left = 15
+          Height = 25
+          Top = 3
+          Width = 126
+          Anchors = [akTop, akRight]
+          BorderSpacing.Right = 14
+          Caption = 'Soft Reset [F1]'
+          TabOrder = 0
+        end
+        object HardResetButton: TButton
+          AnchorSideLeft.Control = ButtonsGroupBox
+          AnchorSideLeft.Side = asrCenter
+          AnchorSideTop.Control = ButtonsGroupBox
+          Left = 155
+          Height = 25
+          Top = 3
+          Width = 126
+          BorderSpacing.Top = 3
+          Caption = 'Hard Reset [F2]'
+          TabOrder = 1
+        end
+        object PowerOffButton: TButton
+          AnchorSideLeft.Control = HardResetButton
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = SoftResetButton
+          Left = 295
+          Height = 25
+          Top = 3
+          Width = 126
+          BorderSpacing.Left = 14
+          Caption = 'Power OFF [F3]'
+          TabOrder = 2
+        end
+      end
     end
-    object TabSheet2: TTabSheet
+    object DeviceTabSheet: TTabSheet
       Caption = 'Device'
     end
-    object TabSheet3: TTabSheet
+    object AppTabSheet: TTabSheet
       Caption = 'Application'
     end
-    object TabSheet4: TTabSheet
+    object AboutTabSheet: TTabSheet
       Caption = 'About'
     end
   end
   object Panel1: TPanel
     Left = 0
     Height = 32
-    Top = 292
+    Top = 293
     Width = 480
     Align = alBottom
     BevelOuter = bvNone
@@ -46,7 +362,7 @@ object fMain: TfMain
     Color = clWhite
     ParentColor = False
     TabOrder = 1
-    object Label1: TLabel
+    object PanelLabel1: TLabel
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = Panel1

@@ -6,20 +6,39 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, StdCtrls;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons;
 
 type
 
   { TfMain }
 
   TfMain = class(TForm)
-    Label1: TLabel;
+    ButtonsGroupBox: TGroupBox;
+    ConnectionGroupBox: TGroupBox;
+    DeviceStatusLabel: TLabel;
+    FirmwareVersionLabel: TLabel;
+    HardResetButton: TButton;
+    IndicatorShape: TShape;
+    NetAddressEdit: TEdit;
+    NetMonitoringCheckBox: TCheckBox;
+    PanelLabel1: TLabel;
     PageControl1: TPageControl;
     Panel1: TPanel;
-    TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
-    TabSheet3: TTabSheet;
-    TabSheet4: TTabSheet;
+    MainTabSheet: TTabSheet;
+    DeviceTabSheet: TTabSheet;
+    AppTabSheet: TTabSheet;
+    AboutTabSheet: TTabSheet;
+    PingGroupBox: TGroupBox;
+    PingStatusIndicatorLabel: TLabel;
+    PingStatusLabel: TLabel;
+    PingTimeoutLabel: TLabel;
+    PingTimeoutSecLabel: TLabel;
+    PingTimeoutTrackBar: TTrackBar;
+    PortSelectorComboBox: TComboBox;
+    PowerOffButton: TButton;
+    ReScanButton: TButton;
+    SoftResetButton: TButton;
+    StartStopButton: TBitBtn;
   private
 
   public
