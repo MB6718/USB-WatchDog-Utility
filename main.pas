@@ -32,6 +32,7 @@ type
     BTCWalletLabel: TLabel;
     FirmwareVersionLabel: TLabel;
     HardResetButton: TButton;
+    HelpButton: TSpeedButton;
     IndicatorShape: TShape;
     InfoLabel: TLabel;
     m10Label: TLabel;
