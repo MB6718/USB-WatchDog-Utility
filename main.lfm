@@ -17,9 +17,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = AppTabSheet
+    ActivePage = AboutTabSheet
     Align = alClient
-    TabIndex = 2
+    TabIndex = 3
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -855,6 +855,118 @@ object fMain: TfMain
     end
     object AboutTabSheet: TTabSheet
       Caption = 'About'
+      ClientHeight = 265
+      ClientWidth = 472
+      object TitleLabel: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = AboutTabSheet
+        Left = 32
+        Height = 30
+        Top = 24
+        Width = 408
+        BorderSpacing.Top = 24
+        Caption = 'USB WatchDog utility v0.1 (Nov 20 2020)'
+        Font.Height = -21
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object InfoLabel: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = TitleLabel
+        AnchorSideTop.Side = asrBottom
+        Left = 21
+        Height = 75
+        Top = 74
+        Width = 430
+        Alignment = taCenter
+        BorderSpacing.Top = 20
+        Caption = 'MB6718 presents'#13#10'support@usbwatchdog.ru'#13#10#13#10'If you liked this utility, you can thank its authors.'#13#10'Just send as much as you want to Monero or Ethereum or Bitcoin wallet adresses: '
+        ParentColor = False
+      end
+      object XMRWalletLabel: TLabel
+        Tag = 1
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = InfoLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 31
+        Height = 13
+        Hint = 'Click to copy'
+        Top = 164
+        Width = 410
+        BorderSpacing.Top = 15
+        Caption = 'V6Sq14vyBmTNj1tU2u7GcgdrF1RBo2rU ... P5b82ZyiLjsXgf47mvWLcegh64w2i6PLd'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object ETHWalletLabel: TLabel
+        Tag = 2
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = XMRWalletLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 118
+        Height = 13
+        Hint = 'Click to copy'
+        Top = 187
+        Width = 236
+        BorderSpacing.Top = 10
+        Caption = '0x7ff6922B03dEe00f597608963CE3e2a1697734'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object CopiedLabel: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = BTCWalletLabel
+        AnchorSideTop.Side = asrBottom
+        Left = 207
+        Height = 21
+        Top = 230
+        Width = 59
+        BorderSpacing.Top = 7
+        Caption = 'Copied!'
+        Font.Color = clGray
+        Font.Height = -16
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        Visible = False
+      end
+      object BTCWalletLabel: TLabel
+        Tag = 2
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = ETHWalletLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 132
+        Height = 13
+        Hint = 'Click to copy'
+        Top = 210
+        Width = 208
+        BorderSpacing.Top = 10
+        Caption = 'XEeobatKNngk3LETR71Botd6SLpyTRHtb5'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+      end
     end
   end
   object Panel1: TPanel

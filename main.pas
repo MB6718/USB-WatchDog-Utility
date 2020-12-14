@@ -25,11 +25,15 @@ type
     ChkAppUpdatesButton: TButton;
     CleanLogButton: TSpeedButton;
     ConnectionGroupBox: TGroupBox;
+    CopiedLabel: TLabel;
     DefaultButton: TBitBtn;
     DeviceStatusLabel: TLabel;
+    ETHWalletLabel: TLabel;
+    BTCWalletLabel: TLabel;
     FirmwareVersionLabel: TLabel;
     HardResetButton: TButton;
     IndicatorShape: TShape;
+    InfoLabel: TLabel;
     m10Label: TLabel;
     m15Label: TLabel;
     m20Label: TLabel;
@@ -59,9 +63,11 @@ type
     Shape2: TShape;
     SoftResetButton: TButton;
     StartStopButton: TBitBtn;
+    TitleLabel: TLabel;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
+    XMRWalletLabel: TLabel;
   private
 
   public
@@ -74,6 +80,7 @@ var
 implementation
 
 { TfMain }
+
 
 initialization
   {$R *.lfm}
