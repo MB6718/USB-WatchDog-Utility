@@ -14,7 +14,18 @@ type
 
   TfMain = class(TForm)
     ButtonsGroupBox: TGroupBox;
+    CheckBox1: TCheckBox;
+    CheckBox2: TCheckBox;
+    CheckBox3: TCheckBox;
+    CheckBox4: TCheckBox;
+    CheckBox5: TCheckBox;
+    CheckBox6: TCheckBox;
+    CheckBox7: TCheckBox;
+    CheckBox8: TCheckBox;
+    ChkAppUpdatesButton: TButton;
+    CleanLogButton: TSpeedButton;
     ConnectionGroupBox: TGroupBox;
+    DefaultButton: TBitBtn;
     DeviceStatusLabel: TLabel;
     FirmwareVersionLabel: TLabel;
     HardResetButton: TButton;
@@ -45,6 +56,7 @@ type
     PowerOffButton: TButton;
     ReScanButton: TButton;
     s10Label: TLabel;
+    Shape2: TShape;
     SoftResetButton: TButton;
     StartStopButton: TBitBtn;
     WaitingSecLabel: TLabel;
