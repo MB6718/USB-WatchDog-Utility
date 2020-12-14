@@ -19,6 +19,12 @@ type
     FirmwareVersionLabel: TLabel;
     HardResetButton: TButton;
     IndicatorShape: TShape;
+    m10Label: TLabel;
+    m15Label: TLabel;
+    m20Label: TLabel;
+    m3Label: TLabel;
+    m5Label: TLabel;
+    ModesRadioGroup: TRadioGroup;
     NetAddressEdit: TEdit;
     NetMonitoringCheckBox: TCheckBox;
     PanelLabel1: TLabel;
@@ -35,10 +41,15 @@ type
     PingTimeoutSecLabel: TLabel;
     PingTimeoutTrackBar: TTrackBar;
     PortSelectorComboBox: TComboBox;
+    PowerModeRadioGroup: TRadioGroup;
     PowerOffButton: TButton;
     ReScanButton: TButton;
+    s10Label: TLabel;
     SoftResetButton: TButton;
     StartStopButton: TBitBtn;
+    WaitingSecLabel: TLabel;
+    WaitingTimeGroupBox: TGroupBox;
+    WaitingTimeTrackBar: TTrackBar;
   private
 
   public
@@ -49,6 +60,8 @@ var
   fMain: TfMain;
 
 implementation
+
+{ TfMain }
 
 initialization
   {$R *.lfm}
