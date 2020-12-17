@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, LazSerial, LazSynaSer;
 
 type
 
@@ -35,6 +35,7 @@ type
     HelpButton: TSpeedButton;
     IndicatorShape: TShape;
     InfoLabel: TLabel;
+    LazSerial1: TLazSerial;
     m10Label: TLabel;
     m15Label: TLabel;
     m20Label: TLabel;
@@ -70,6 +71,8 @@ type
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure ReScanButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
@@ -77,6 +80,8 @@ type
   private
 
   public
+    const AppName = 'USB WatchDog';
+    const AppVers = 'v0.1';
     const xmr_wallet = 'xmr_address';
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
@@ -93,6 +98,28 @@ procedure TfMain.Timer1Timer(Sender: TObject);
 begin
   CopiedLabel.Visible:=False;
   Timer1.Enabled:=False;
+end;
+
+procedure TfMain.FormCreate(Sender: TObject);
+begin
+  fMain.Caption:=AppName + ' ' + AppVers;
+  Application.Title:=AppName + ' ' + AppVers;
+
+  PageControl1.ActivePageIndex:=0;
+
+  PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
+  if PortSelectorComboBox.Items.Count > 0 then begin
+    PortSelectorComboBox.ItemIndex:=0;
+    StartStopButton.Enabled:=True;
+    IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
+  end;
+end;
+
+procedure TfMain.ReScanButtonClick(Sender: TObject);
+begin
+  PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
+  if PortSelectorComboBox.Items.Count > 0 then
+    PortSelectorComboBox.ItemIndex:=0;
 end;
 
 procedure TfMain.WalletsLabelClick(Sender: TObject);

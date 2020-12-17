@@ -10,6 +10,7 @@ object fMain: TfMain
   ClientWidth = 480
   Constraints.MaxWidth = 480
   Constraints.MinWidth = 480
+  OnCreate = FormCreate
   Position = poDesktopCenter
   LCLVersion = '1.8.4.0'
   object PageControl1: TPageControl
@@ -135,6 +136,7 @@ object fMain: TfMain
           Anchors = [akTop, akRight]
           BorderSpacing.Top = 2
           Caption = 'ReScan'
+          OnClick = ReScanButtonClick
           TabOrder = 2
         end
         object DeviceStatusLabel: TLabel
@@ -1062,6 +1064,18 @@ object fMain: TfMain
     Interval = 2000
     OnTimer = Timer1Timer
     left = 424
+    top = 16
+  end
+  object LazSerial1: TLazSerial
+    Active = False
+    BaudRate = br__9600
+    DataBits = db8bits
+    Parity = pNone
+    FlowControl = fcNone
+    StopBits = sbOne
+    Device = 'COM1'
+    RcvLineCRLF = False
+    left = 336
     top = 16
   end
 end
