@@ -74,13 +74,22 @@ type
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
     procedure FormCreate(Sender: TObject);
+    procedure m10LabelClick(Sender: TObject);
+    procedure m15LabelClick(Sender: TObject);
+    procedure m20LabelClick(Sender: TObject);
+    procedure m3LabelClick(Sender: TObject);
+    procedure m5LabelClick(Sender: TObject);
     procedure PowerModeRadioGroupClick(Sender: TObject);
     procedure ReScanButtonClick(Sender: TObject);
+    procedure s10LabelClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure WaitingTimeTrackBarChange(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
     procedure WalletsLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure TimeLabelMouseLeave(Sender: TObject);
+    procedure TimeLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
   private
     procedure ActivateInterface();
     procedure DeactivateInterface();
@@ -105,6 +114,11 @@ procedure TfMain.Timer1Timer(Sender: TObject);
 begin
   CopiedLabel.Visible:=False;
   Timer1.Enabled:=False;
+end;
+
+procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
+begin
+  WaitingSecLabel.Caption:=IntToStr(WaitingTimeTrackBar.Position * 10) + ' sec';
 end;
 
 procedure TfMain.FormCreate(Sender: TObject);
@@ -166,6 +180,42 @@ begin
   Timer1.Enabled:=True;
 end;
 
+procedure TfMain.m10LabelClick(Sender: TObject);
+begin
+  WaitingTimeTrackBar.Position:=60;
+  WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
+procedure TfMain.m15LabelClick(Sender: TObject);
+begin
+  WaitingTimeTrackBar.Position:=90;
+  WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
+procedure TfMain.m5LabelClick(Sender: TObject);
+begin
+  WaitingTimeTrackBar.Position:=30;
+  WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
+procedure TfMain.s10LabelClick(Sender: TObject);
+begin
+  WaitingTimeTrackBar.Position:=1;
+  WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
+procedure TfMain.m20LabelClick(Sender: TObject);
+begin
+  WaitingTimeTrackBar.Position:=120;
+  WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
+procedure TfMain.m3LabelClick(Sender: TObject);
+begin
+  WaitingTimeTrackBar.Position:=18;
+  WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
 procedure TfMain.WalletsLabelMouseLeave(Sender: TObject);
 begin
   if (Sender is TLabel) then
@@ -176,6 +226,18 @@ procedure TfMain.WalletsLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y
 begin
   if (Sender is TLabel) then
     (Sender as TLabel).Font.Color:=$8000FF;
+end;
+
+procedure TfMain.TimeLabelMouseLeave(Sender: TObject);
+begin
+  if (Sender is TLabel) then
+    (Sender as TLabel).Font.Style:=(Sender as TLabel).Font.Style-[fsBold];
+end;
+
+procedure TfMain.TimeLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+begin
+  if (Sender is TLabel) then
+    (Sender as TLabel).Font.Style:=(Sender as TLabel).Font.Style+[fsBold];
 end;
 
 procedure TfMain.ActivateInterface();

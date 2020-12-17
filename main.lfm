@@ -18,9 +18,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = MainTabSheet
+    ActivePage = DeviceTabSheet
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -405,7 +405,8 @@ object fMain: TfMain
           Frequency = 3
           Max = 127
           Min = 1
-          Position = 120
+          OnChange = WaitingTimeTrackBarChange
+          Position = 1
           TickMarks = tmTopLeft
           BorderSpacing.Left = 8
           BorderSpacing.Top = 22
@@ -438,71 +439,84 @@ object fMain: TfMain
           BorderSpacing.Top = 8
           Caption = '10s'
           ParentColor = False
+          OnClick = s10LabelClick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
         end
         object m20Label: TLabel
-          AnchorSideLeft.Control = m15Label
-          AnchorSideLeft.Side = asrBottom
+          AnchorSideLeft.Control = WaitingTimeGroupBox
           AnchorSideTop.Control = s10Label
           Cursor = crHandPoint
           Left = 340
           Height = 15
           Top = 8
           Width = 23
-          BorderSpacing.Left = 62
+          BorderSpacing.Left = 340
           Caption = '20m'
           ParentColor = False
+          OnClick = m20LabelClick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
         end
         object m3Label: TLabel
-          AnchorSideLeft.Control = s10Label
-          AnchorSideLeft.Side = asrBottom
+          AnchorSideLeft.Control = WaitingTimeGroupBox
           AnchorSideTop.Control = s10Label
           Cursor = crHandPoint
           Left = 58
           Height = 15
           Top = 8
           Width = 17
-          BorderSpacing.Left = 30
+          BorderSpacing.Left = 58
           Caption = '3m'
           ParentColor = False
+          OnClick = m3LabelClick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
         end
         object m5Label: TLabel
-          AnchorSideLeft.Control = m3Label
-          AnchorSideLeft.Side = asrBottom
+          AnchorSideLeft.Control = WaitingTimeGroupBox
           AnchorSideTop.Control = s10Label
           Cursor = crHandPoint
-          Left = 91
+          Left = 92
           Height = 15
           Top = 8
           Width = 17
-          BorderSpacing.Left = 16
+          BorderSpacing.Left = 92
           Caption = '5m'
           ParentColor = False
+          OnClick = m5LabelClick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
         end
         object m10Label: TLabel
-          AnchorSideLeft.Control = m5Label
-          AnchorSideLeft.Side = asrBottom
+          AnchorSideLeft.Control = WaitingTimeGroupBox
           AnchorSideTop.Control = s10Label
           Cursor = crHandPoint
           Left = 172
           Height = 15
           Top = 8
           Width = 23
-          BorderSpacing.Left = 64
+          BorderSpacing.Left = 172
           Caption = '10m'
           ParentColor = False
+          OnClick = m10LabelClick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
         end
         object m15Label: TLabel
-          AnchorSideLeft.Control = m10Label
-          AnchorSideLeft.Side = asrBottom
+          AnchorSideLeft.Control = WaitingTimeGroupBox
           AnchorSideTop.Control = s10Label
           Cursor = crHandPoint
-          Left = 255
+          Left = 256
           Height = 15
           Top = 8
           Width = 23
-          BorderSpacing.Left = 60
+          BorderSpacing.Left = 256
           Caption = '15m'
           ParentColor = False
+          OnClick = m15LabelClick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
         end
       end
       object ModesRadioGroup: TRadioGroup
