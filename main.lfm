@@ -375,6 +375,7 @@ object fMain: TfMain
           'USB power is turned off together with the main power'
           'USB power in SB mode'
         )
+        OnClick = PowerModeRadioGroupClick
         TabOrder = 0
       end
       object WaitingTimeGroupBox: TGroupBox

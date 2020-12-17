@@ -74,6 +74,7 @@ type
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
     procedure FormCreate(Sender: TObject);
+    procedure PowerModeRadioGroupClick(Sender: TObject);
     procedure ReScanButtonClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -119,6 +120,18 @@ begin
     PortSelectorComboBox.ItemIndex:=0;
     StartStopButton.Enabled:=True;
     IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
+  end;
+end;
+
+procedure TfMain.PowerModeRadioGroupClick(Sender: TObject);
+begin
+  if PowerModeRadioGroup.ItemIndex=1 then begin
+    PowerOffButton.Enabled:=True;
+    ModesRadioGroup.Controls[2].Enabled:=True;
+  end
+  else begin
+    PowerOffButton.Enabled:=False;
+    ModesRadioGroup.Controls[2].Enabled:=False;
   end;
 end;
 
@@ -177,6 +190,7 @@ begin
   WaitingTimeGroupBox.Enabled:=True;
   ModesRadioGroup.Enabled:=True;
   PowerModeRadioGroup.Enabled:=True;
+  PowerModeRadioGroupClick(Self);
 
   { PingGroupBox Disable }
   NetMonitoringCheckBox.Enabled:=False;
