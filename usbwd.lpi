@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="13"/>
+      <BuildNr Value="18"/>
       <StringTable CompanyName="MB6718" FileDescription="USBWatchDog v0.1" InternalName="usbwd" LegalCopyright="© 2020, MB6718" OriginalFilename="usbwd" ProductName="USBWatchDog" ProductVersion="0.1"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -66,10 +66,13 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="LazSerialPort"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="2">
       <Unit0>

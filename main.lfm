@@ -906,6 +906,9 @@ object fMain: TfMain
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
+        OnClick = WalletsLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
       end
       object ETHWalletLabel: TLabel
         Tag = 2
@@ -927,6 +930,9 @@ object fMain: TfMain
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
+        OnClick = WalletsLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
       end
       object CopiedLabel: TLabel
         AnchorSideLeft.Control = AboutTabSheet
@@ -966,6 +972,9 @@ object fMain: TfMain
         ParentFont = False
         ParentShowHint = False
         ShowHint = True
+        OnClick = WalletsLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
       end
     end
   end
@@ -1048,5 +1057,11 @@ object fMain: TfMain
       ShowHint = True
       ParentShowHint = False
     end
+  end
+  object Timer1: TTimer
+    Interval = 2000
+    OnTimer = Timer1Timer
+    left = 424
+    top = 16
   end
 end

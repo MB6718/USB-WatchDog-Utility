@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, StdCtrls, Buttons;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd;
 
 type
 
@@ -64,15 +64,22 @@ type
     Shape2: TShape;
     SoftResetButton: TButton;
     StartStopButton: TBitBtn;
+    Timer1: TTimer;
     TitleLabel: TLabel;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
+    procedure Timer1Timer(Sender: TObject);
+    procedure WalletsLabelClick(Sender: TObject);
+    procedure WalletsLabelMouseLeave(Sender: TObject);
+    procedure WalletsLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
   private
 
   public
-
+    const xmr_wallet = 'xmr_address';
+    const eth_wallet = 'eth_address';
+    const btc_wallet = 'btc_address';
   end;
 
 var
@@ -82,6 +89,35 @@ implementation
 
 { TfMain }
 
+procedure TfMain.Timer1Timer(Sender: TObject);
+begin
+  CopiedLabel.Visible:=False;
+  Timer1.Enabled:=False;
+end;
+
+procedure TfMain.WalletsLabelClick(Sender: TObject);
+begin
+  if (Sender is TLabel) then
+    case (Sender as TLabel).Tag of
+      1: Clipboard.AsText:=xmr_wallet;
+      2: Clipboard.AsText:=eth_wallet;
+      3: Clipboard.AsText:=btc_wallet;
+    end;
+  CopiedLabel.Visible:=True;
+  Timer1.Enabled:=True;
+end;
+
+procedure TfMain.WalletsLabelMouseLeave(Sender: TObject);
+begin
+  if (Sender is TLabel) then
+    (Sender as TLabel).Font.Color:=clHighlight;
+end;
+
+procedure TfMain.WalletsLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+begin
+  if (Sender is TLabel) then
+    (Sender as TLabel).Font.Color:=$8000FF;
+end;
 
 initialization
   {$R *.lfm}
