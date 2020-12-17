@@ -33,6 +33,7 @@ type
     FirmwareVersionLabel: TLabel;
     HardResetButton: TButton;
     HelpButton: TSpeedButton;
+    ImageList1: TImageList;
     IndicatorShape: TShape;
     InfoLabel: TLabel;
     LazSerial1: TLazSerial;
@@ -66,6 +67,7 @@ type
     SoftResetButton: TButton;
     StartStopButton: TBitBtn;
     Timer1: TTimer;
+    Timer2: TTimer;
     TitleLabel: TLabel;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
@@ -73,18 +75,22 @@ type
     XMRWalletLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ReScanButtonClick(Sender: TObject);
+    procedure StartStopButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
     procedure WalletsLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
   private
-
+    procedure ActivateInterface();
+    procedure DeactivateInterface();
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
     const xmr_wallet = 'xmr_address';
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
+
+    var Serial_Active: Boolean;
   end;
 
 var
@@ -106,6 +112,7 @@ begin
   Application.Title:=AppName + ' ' + AppVers;
 
   PageControl1.ActivePageIndex:=0;
+  Serial_Active:=False;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   if PortSelectorComboBox.Items.Count > 0 then begin
@@ -120,6 +127,18 @@ begin
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   if PortSelectorComboBox.Items.Count > 0 then
     PortSelectorComboBox.ItemIndex:=0;
+end;
+
+procedure TfMain.StartStopButtonClick(Sender: TObject);
+begin
+  if not Serial_Active then begin
+    ActivateInterface();
+    Serial_Active:=True;
+  end
+  else begin
+    DeactivateInterface();
+    Serial_Active:=False;
+  end;
 end;
 
 procedure TfMain.WalletsLabelClick(Sender: TObject);
@@ -144,6 +163,52 @@ procedure TfMain.WalletsLabelMouseMove(Sender: TObject; Shift: TShiftState; X, Y
 begin
   if (Sender is TLabel) then
     (Sender as TLabel).Font.Color:=$8000FF;
+end;
+
+procedure TfMain.ActivateInterface();
+begin
+  ImageList1.GetBitmap(2, StartStopButton.Glyph);
+  PortSelectorComboBox.Enabled:=False;
+  ReScanButton.Enabled:=False;
+  IndicatorShape.Brush.Color:=RGBToColor(88, 174, 0); // darkgreen
+
+  ButtonsGroupBox.Enabled:=True;
+
+  WaitingTimeGroupBox.Enabled:=True;
+  ModesRadioGroup.Enabled:=True;
+  PowerModeRadioGroup.Enabled:=True;
+
+  { PingGroupBox Disable }
+  NetMonitoringCheckBox.Enabled:=False;
+  NetAddressEdit.Enabled:=False;
+  PingTimeoutTrackBar.Enabled:=False;
+  PingTimeoutSecLabel.Enabled:=False;
+  PingTimeoutLabel.Enabled:=False;
+  PingStatusLabel.Enabled:=False;
+end;
+
+procedure TfMain.DeactivateInterface();
+begin
+  ImageList1.GetBitmap(0, StartStopButton.Glyph);
+  PortSelectorComboBox.Enabled:=True;
+  ReScanButton.Enabled:=True;
+  IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
+
+  ButtonsGroupBox.Enabled:=False;
+
+  WaitingTimeGroupBox.Enabled:=False;
+  ModesRadioGroup.Enabled:=False;
+  PowerModeRadioGroup.Enabled:=False;
+
+  { PingGroupBox Enable }
+  NetMonitoringCheckBox.Enabled:=True;
+  NetAddressEdit.Enabled:=True;
+  if NetMonitoringCheckBox.Checked then begin
+    PingTimeoutTrackBar.Enabled:=True;
+    PingTimeoutSecLabel.Enabled:=True;
+    PingTimeoutLabel.Enabled:=True;
+    PingStatusLabel.Enabled:=True;
+  end;
 end;
 
 initialization
