@@ -1,7 +1,7 @@
 object fMain: TfMain
-  Left = 730
+  Left = 736
   Height = 325
-  Top = 438
+  Top = 444
   Width = 480
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -11,6 +11,7 @@ object fMain: TfMain
   Constraints.MaxWidth = 480
   Constraints.MinWidth = 480
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   Position = poDesktopCenter
   LCLVersion = '1.8.4.0'
   object PageControl1: TPageControl
@@ -18,9 +19,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = DeviceTabSheet
+    ActivePage = MainTabSheet
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -1077,6 +1078,7 @@ object fMain: TfMain
     end
   end
   object Timer1: TTimer
+    Enabled = False
     Interval = 2000
     OnTimer = Timer1Timer
     left = 424
@@ -1091,11 +1093,15 @@ object fMain: TfMain
     StopBits = sbOne
     Device = 'COM1'
     RcvLineCRLF = False
+    OnRxData = LazSerial1RxData
+    OnStatus = LazSerial1Status
     left = 336
     top = 16
   end
   object Timer2: TTimer
+    Enabled = False
     Interval = 3000
+    OnTimer = Timer2Timer
     left = 391
     top = 16
   end

@@ -74,6 +74,10 @@ type
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure LazSerial1RxData(Sender: TObject);
+    procedure LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
+      const Value: string);
     procedure m10LabelClick(Sender: TObject);
     procedure m15LabelClick(Sender: TObject);
     procedure m20LabelClick(Sender: TObject);
@@ -84,6 +88,7 @@ type
     procedure s10LabelClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
     procedure WaitingTimeTrackBarChange(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
@@ -93,14 +98,18 @@ type
   private
     procedure ActivateInterface();
     procedure DeactivateInterface();
+    function SerialOpen(Port: String): boolean;
+    procedure SerialClose();
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
+    const ds_label = 'Device status: ';
+    const dfw_label = 'Device firmware version: ';
     const xmr_wallet = 'xmr_address';
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
 
-    var Serial_Active: Boolean;
+    var device_conn_flag: Boolean;
   end;
 
 var
@@ -116,6 +125,16 @@ begin
   Timer1.Enabled:=False;
 end;
 
+procedure TfMain.Timer2Timer(Sender: TObject);
+begin
+  if not device_conn_flag then begin
+    SerialClose();
+    DeactivateInterface();
+    Timer2.Enabled:=False;
+  end;
+  device_conn_flag:=False;
+end;
+
 procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
 begin
   WaitingSecLabel.Caption:=IntToStr(WaitingTimeTrackBar.Position * 10) + ' sec';
@@ -127,7 +146,7 @@ begin
   Application.Title:=AppName + ' ' + AppVers;
 
   PageControl1.ActivePageIndex:=0;
-  Serial_Active:=False;
+  device_conn_flag:=False;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   if PortSelectorComboBox.Items.Count > 0 then begin
@@ -135,6 +154,30 @@ begin
     StartStopButton.Enabled:=True;
     IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
   end;
+end;
+
+procedure TfMain.FormDestroy(Sender: TObject);
+begin
+  if LazSerial1.Active then begin
+    SerialClose();
+    Timer2.Enabled:=False;
+    DeactivateInterface();
+  end;
+end;
+
+procedure TfMain.LazSerial1RxData(Sender: TObject);
+begin
+
+end;
+
+procedure TfMain.LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
+  const Value: string);
+begin
+  case Reason of
+    HR_SerialClose: DeviceStatusLabel.Caption:=ds_label + 'Not connected';
+    HR_Connect: DeviceStatusLabel.Caption:=ds_label + 'Try to connect';
+  end;
+  FirmwareVersionLabel.Caption:=dfw_label + 'undefined';
 end;
 
 procedure TfMain.PowerModeRadioGroupClick(Sender: TObject);
@@ -158,13 +201,16 @@ end;
 
 procedure TfMain.StartStopButtonClick(Sender: TObject);
 begin
-  if not Serial_Active then begin
-    ActivateInterface();
-    Serial_Active:=True;
+  if LazSerial1.Active then begin
+    SerialClose();
+    Timer2.Enabled:=False;
+    DeactivateInterface();
   end
   else begin
-    DeactivateInterface();
-    Serial_Active:=False;
+    if SerialOpen(PortSelectorComboBox.Text) then begin
+      ActivateInterface();
+      Timer2.Enabled:=True;
+    end;
   end;
 end;
 
@@ -245,14 +291,13 @@ begin
   ImageList1.GetBitmap(2, StartStopButton.Glyph);
   PortSelectorComboBox.Enabled:=False;
   ReScanButton.Enabled:=False;
-  IndicatorShape.Brush.Color:=RGBToColor(88, 174, 0); // darkgreen
+  IndicatorShape.Brush.Color:=RGBToColor(225, 203, 0);  // (88, 174, 0) darkgreen
 
-  ButtonsGroupBox.Enabled:=True;
-
+  {ButtonsGroupBox.Enabled:=True;
   WaitingTimeGroupBox.Enabled:=True;
   ModesRadioGroup.Enabled:=True;
   PowerModeRadioGroup.Enabled:=True;
-  PowerModeRadioGroupClick(Self);
+  PowerModeRadioGroupClick(Self);}
 
   { PingGroupBox Disable }
   NetMonitoringCheckBox.Enabled:=False;
@@ -270,11 +315,10 @@ begin
   ReScanButton.Enabled:=True;
   IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
 
-  ButtonsGroupBox.Enabled:=False;
-
+  {ButtonsGroupBox.Enabled:=False;
   WaitingTimeGroupBox.Enabled:=False;
   ModesRadioGroup.Enabled:=False;
-  PowerModeRadioGroup.Enabled:=False;
+  PowerModeRadioGroup.Enabled:=False;}
 
   { PingGroupBox Enable }
   NetMonitoringCheckBox.Enabled:=True;
@@ -285,6 +329,33 @@ begin
     PingTimeoutLabel.Enabled:=True;
     PingStatusLabel.Enabled:=True;
   end;
+end;
+
+function TfMain.SerialOpen(Port: String): boolean;
+begin
+  LazSerial1.Device:=Port;
+  if not LazSerial1.Active then
+    try
+      LazSerial1.Open;
+      Result:=True;
+    except
+      on E: Exception do begin
+        ShowMessage(E.Message);
+        Result:=False;
+      end;
+    end;
+end;
+
+procedure TfMain.SerialClose();
+begin
+  if LazSerial1.Active then
+    try
+      LazSerial1.Close;
+    except
+      on E: Exception do begin
+        ShowMessage(E.Message);
+      end;
+    end;
 end;
 
 initialization
