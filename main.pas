@@ -100,16 +100,33 @@ type
     procedure DeactivateInterface();
     function SerialOpen(Port: String): boolean;
     procedure SerialClose();
+    procedure SerialSendByte(Command: Integer);
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
+    const Manufacturer = 'MB6718';
     const ds_label = 'Device status: ';
     const dfw_label = 'Device firmware version: ';
     const xmr_wallet = 'xmr_address';
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
 
+    { Command list }
+    const hard_reset_cmd = $FE;
+    const soft_reset_cmd = $FF;
+    const power_off_cmd = $FD;
+    const soft_mode_cmd = $A0;
+    const hard_mode_cmd = $A1;
+    const power_off_mode_cmd = $A2;
+    const accept_cmd = $AA;
+    const hello_cmd = $80;
+    const check_device_cmd = $81;
+    const get_device_version_cmd = $88;
+
     var device_conn_flag: Boolean;
+    var china_flag: Integer;
+    var check_flag: Boolean;
+    var fw_version: Integer;
   end;
 
 var
@@ -127,7 +144,9 @@ end;
 
 procedure TfMain.Timer2Timer(Sender: TObject);
 begin
-  if not device_conn_flag then begin
+  if device_conn_flag then
+    SerialSendByte(hello_cmd)
+  else begin
     SerialClose();
     DeactivateInterface();
     Timer2.Enabled:=False;
@@ -147,6 +166,7 @@ begin
 
   PageControl1.ActivePageIndex:=0;
   device_conn_flag:=False;
+  china_flag:=0;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   if PortSelectorComboBox.Items.Count > 0 then begin
@@ -166,18 +186,68 @@ begin
 end;
 
 procedure TfMain.LazSerial1RxData(Sender: TObject);
+var
+  command: Integer;
 begin
+  command:=LazSerial1.SynSer.RecvByte(0);
+  case command of
+    $81: begin
+      IndicatorShape.Brush.Color:=RGBToColor(102, 204, 0); // green
+      ButtonsGroupBox.Enabled:=True;
+      WaitingTimeGroupBox.Enabled:=True;
+      DeviceStatusLabel.Caption:=ds_label + 'connected';
 
+      if china_flag > 1 then begin
+        FirmwareVersionLabel.Caption:=dfw_label + 'CHINA';
+        check_flag:=False;
+      end;
+      device_conn_flag:=True;
+      SerialSendByte(check_device_cmd);
+      if check_flag then
+        inc(china_flag);
+    end;
+    $80: begin
+      ModesRadioGroup.Enabled:=True;
+      PowerModeRadioGroup.Enabled:=True;
+      PowerModeRadioGroupClick(Self);
+
+      if check_flag then
+        check_flag:=False;
+      if fw_version > 0 then begin
+        FirmwareVersionLabel.Caption:=dfw_label + Manufacturer + ' v0.' + IntToStr(fw_version);
+      end
+      else begin
+        FirmwareVersionLabel.Caption:=dfw_label + Manufacturer;
+        SerialSendByte(get_device_version_cmd);
+      end;
+    end;
+    $01..$7F: begin
+      if china_flag < 2 then
+        fw_version:=command;
+    end;
+  end;
 end;
 
 procedure TfMain.LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
   const Value: string);
 begin
   case Reason of
-    HR_SerialClose: DeviceStatusLabel.Caption:=ds_label + 'Not connected';
-    HR_Connect: DeviceStatusLabel.Caption:=ds_label + 'Try to connect';
+    HR_SerialClose: begin
+      DeviceStatusLabel.Caption:=ds_label + 'Not connected';
+      FirmwareVersionLabel.Caption:=dfw_label + 'undefined';
+      fw_version:=0;
+      china_flag:=0;
+      check_flag:=True;
+    end;
+    HR_Connect: begin
+      DeviceStatusLabel.Caption:=ds_label + 'Try to connect';
+      FirmwareVersionLabel.Caption:=dfw_label + 'undefined';
+      fw_version:=0;
+      china_flag:=0;
+      check_flag:=True;
+    end;
   end;
-  FirmwareVersionLabel.Caption:=dfw_label + 'undefined';
+
 end;
 
 procedure TfMain.PowerModeRadioGroupClick(Sender: TObject);
@@ -205,10 +275,12 @@ begin
     SerialClose();
     Timer2.Enabled:=False;
     DeactivateInterface();
+    china_flag:=0;
   end
   else begin
     if SerialOpen(PortSelectorComboBox.Text) then begin
       ActivateInterface();
+      SerialSendByte(hello_cmd);
       Timer2.Enabled:=True;
     end;
   end;
@@ -293,12 +365,6 @@ begin
   ReScanButton.Enabled:=False;
   IndicatorShape.Brush.Color:=RGBToColor(225, 203, 0);  // (88, 174, 0) darkgreen
 
-  {ButtonsGroupBox.Enabled:=True;
-  WaitingTimeGroupBox.Enabled:=True;
-  ModesRadioGroup.Enabled:=True;
-  PowerModeRadioGroup.Enabled:=True;
-  PowerModeRadioGroupClick(Self);}
-
   { PingGroupBox Disable }
   NetMonitoringCheckBox.Enabled:=False;
   NetAddressEdit.Enabled:=False;
@@ -315,10 +381,10 @@ begin
   ReScanButton.Enabled:=True;
   IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
 
-  {ButtonsGroupBox.Enabled:=False;
+  ButtonsGroupBox.Enabled:=False;
   WaitingTimeGroupBox.Enabled:=False;
   ModesRadioGroup.Enabled:=False;
-  PowerModeRadioGroup.Enabled:=False;}
+  PowerModeRadioGroup.Enabled:=False;
 
   { PingGroupBox Enable }
   NetMonitoringCheckBox.Enabled:=True;
@@ -351,6 +417,18 @@ begin
   if LazSerial1.Active then
     try
       LazSerial1.Close;
+    except
+      on E: Exception do begin
+        ShowMessage(E.Message);
+      end;
+    end;
+end;
+
+procedure TfMain.SerialSendByte(Command: Integer);
+begin
+  if LazSerial1.Active then
+    try
+      LazSerial1.SynSer.SendByte(Command);
     except
       on E: Exception do begin
         ShowMessage(E.Message);

@@ -1100,7 +1100,7 @@ object fMain: TfMain
   end
   object Timer2: TTimer
     Enabled = False
-    Interval = 3000
+    Interval = 2000
     OnTimer = Timer2Timer
     left = 391
     top = 16
