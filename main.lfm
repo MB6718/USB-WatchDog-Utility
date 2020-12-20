@@ -19,9 +19,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = MainTabSheet
+    ActivePage = DeviceTabSheet
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -317,6 +317,7 @@ object fMain: TfMain
           Anchors = [akTop, akRight]
           BorderSpacing.Right = 14
           Caption = 'Soft Reset [F1]'
+          OnClick = SoftResetButtonClick
           TabOrder = 0
         end
         object HardResetButton: TButton
@@ -329,6 +330,7 @@ object fMain: TfMain
           Width = 126
           BorderSpacing.Top = 3
           Caption = 'Hard Reset [F2]'
+          OnClick = HardResetButtonClick
           TabOrder = 1
         end
         object PowerOffButton: TButton
@@ -341,6 +343,7 @@ object fMain: TfMain
           Width = 126
           BorderSpacing.Left = 14
           Caption = 'Power OFF [F3]'
+          OnClick = PowerOffButtonClick
           TabOrder = 2
         end
       end
@@ -550,6 +553,7 @@ object fMain: TfMain
           'Hard Reset'
           'Power OFF'
         )
+        OnClick = ModesRadioGroupClick
         TabOrder = 2
       end
     end

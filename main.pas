@@ -75,6 +75,7 @@ type
     XMRWalletLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure HardResetButtonClick(Sender: TObject);
     procedure LazSerial1RxData(Sender: TObject);
     procedure LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
       const Value: string);
@@ -83,9 +84,12 @@ type
     procedure m20LabelClick(Sender: TObject);
     procedure m3LabelClick(Sender: TObject);
     procedure m5LabelClick(Sender: TObject);
+    procedure ModesRadioGroupClick(Sender: TObject);
     procedure PowerModeRadioGroupClick(Sender: TObject);
+    procedure PowerOffButtonClick(Sender: TObject);
     procedure ReScanButtonClick(Sender: TObject);
     procedure s10LabelClick(Sender: TObject);
+    procedure SoftResetButtonClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
@@ -157,6 +161,8 @@ end;
 procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
 begin
   WaitingSecLabel.Caption:=IntToStr(WaitingTimeTrackBar.Position * 10) + ' sec';
+  if LazSerial1.Active then
+    SerialSendByte(WaitingTimeTrackBar.Position);
 end;
 
 procedure TfMain.FormCreate(Sender: TObject);
@@ -205,6 +211,7 @@ begin
       SerialSendByte(check_device_cmd);
       if check_flag then
         inc(china_flag);
+      WaitingTimeTrackBar.OnChange(Self);
     end;
     $80: begin
       ModesRadioGroup.Enabled:=True;
@@ -220,6 +227,8 @@ begin
         FirmwareVersionLabel.Caption:=dfw_label + Manufacturer;
         SerialSendByte(get_device_version_cmd);
       end;
+      Sleep(200);
+      ModesRadioGroup.OnClick(Self);
     end;
     $01..$7F: begin
       if china_flag < 2 then
@@ -247,7 +256,6 @@ begin
       check_flag:=True;
     end;
   end;
-
 end;
 
 procedure TfMain.PowerModeRadioGroupClick(Sender: TObject);
@@ -267,6 +275,24 @@ begin
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   if PortSelectorComboBox.Items.Count > 0 then
     PortSelectorComboBox.ItemIndex:=0;
+end;
+
+procedure TfMain.SoftResetButtonClick(Sender: TObject);
+begin
+  if LazSerial1.Active then
+    SerialSendByte(soft_reset_cmd);
+end;
+
+procedure TfMain.HardResetButtonClick(Sender: TObject);
+begin
+  if LazSerial1.Active then
+    SerialSendByte(hard_reset_cmd);
+end;
+
+procedure TfMain.PowerOffButtonClick(Sender: TObject);
+begin
+  if LazSerial1.Active then
+    SerialSendByte(power_off_cmd);
 end;
 
 procedure TfMain.StartStopButtonClick(Sender: TObject);
@@ -314,6 +340,24 @@ procedure TfMain.m5LabelClick(Sender: TObject);
 begin
   WaitingTimeTrackBar.Position:=30;
   WaitingTimeTrackBar.OnChange(WaitingTimeTrackBar);
+end;
+
+procedure TfMain.ModesRadioGroupClick(Sender: TObject);
+begin
+  case ModesRadioGroup.ItemIndex of
+    0: begin
+        if LazSerial1.Active then
+          SerialSendByte(soft_mode_cmd);
+    end;
+    1: begin
+        if LazSerial1.Active then
+          SerialSendByte(hard_mode_cmd);
+    end;
+    2: begin
+        if LazSerial1.Active then
+          SerialSendByte(power_off_mode_cmd);
+    end;
+  end;
 end;
 
 procedure TfMain.s10LabelClick(Sender: TObject);
