@@ -73,6 +73,7 @@ type
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
+    procedure CheckBox7Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure HardResetButtonClick(Sender: TObject);
@@ -115,6 +116,16 @@ type
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
 
+    { Config file }
+    {$IFDEF UNIX} // -- UNIX --
+      {$IFDEF LINUX}
+        const ConfFile = 'usbwd.conf';
+      {$ENDIF}
+    {$ENDIF}
+    {$IFDEF WINDOWS} // -- WINDOWS --
+      const ConfFile = 'config.ini';
+    {$ENDIF}
+
     { Command list }
     const hard_reset_cmd = $FE;
     const soft_reset_cmd = $FF;
@@ -137,6 +148,9 @@ var
   fMain: TfMain;
 
 implementation
+
+uses
+  AppConfigs;
 
 { TfMain }
 
@@ -165,7 +179,17 @@ begin
     SerialSendByte(WaitingTimeTrackBar.Position);
 end;
 
+procedure TfMain.CheckBox7Change(Sender: TObject);
+begin
+  if CheckBox7.Checked then
+    CheckBox8.Enabled:=True
+  else
+    CheckBox8.Enabled:=False;
+end;
+
 procedure TfMain.FormCreate(Sender: TObject);
+var
+  i: integer;
 begin
   fMain.Caption:=AppName + ' ' + AppVers;
   Application.Title:=AppName + ' ' + AppVers;
@@ -174,9 +198,31 @@ begin
   device_conn_flag:=False;
   china_flag:=0;
 
+  ReadAppConfigs(ConfFile);
+  if AutoConnect then
+    CheckBox8.Checked:=True;
+
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   if PortSelectorComboBox.Items.Count > 0 then begin
     PortSelectorComboBox.ItemIndex:=0;
+    if DefaultPort <> '' then begin
+      CheckBox7.Checked:=True;
+      for i:=0 to PortSelectorComboBox.Items.Count - 1 do
+        if DefaultPort = PortSelectorComboBox.Items[i] then begin
+          PortSelectorComboBox.ItemIndex:=i;
+          if CheckBox8.Checked then
+            StartStopButtonClick(Self);
+          Break;
+        end;
+        if (i = PortSelectorComboBox.Items.Count - 1) and
+           (DefaultPort <> PortSelectorComboBox.Items[i]) then begin
+          MessageDlg(
+            'Error COM port',
+            'Port "' + DefaultPort + '" not exist, please select other port',
+            mtError, [mbOK], 0);
+          PortSelectorComboBox.Text:=DefaultPort;
+        end;
+    end;
     StartStopButton.Enabled:=True;
     IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
   end;
@@ -189,6 +235,12 @@ begin
     Timer2.Enabled:=False;
     DeactivateInterface();
   end;
+  if CheckBox7.Checked then
+    DefaultPort:=PortSelectorComboBox.Text
+  else
+    DefaultPort:='';
+  AutoConnect:=CheckBox8.Checked;
+  WriteAppConfigs(ConfFile);
 end;
 
 procedure TfMain.LazSerial1RxData(Sender: TObject);
