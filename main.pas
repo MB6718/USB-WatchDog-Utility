@@ -76,6 +76,8 @@ type
     procedure CheckBox7Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormWindowStateChange(Sender: TObject);
     procedure HardResetButtonClick(Sender: TObject);
     procedure LazSerial1RxData(Sender: TObject);
     procedure LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
@@ -235,12 +237,29 @@ begin
     Timer2.Enabled:=False;
     DeactivateInterface();
   end;
+
+  WinPosX:=fMain.Left;
+  WinPosY:=fMain.Top;
   if CheckBox7.Checked then
     DefaultPort:=PortSelectorComboBox.Text
   else
     DefaultPort:='';
   AutoConnect:=CheckBox8.Checked;
   WriteAppConfigs(ConfFile);
+end;
+
+procedure TfMain.FormShow(Sender: TObject);
+begin
+  if (WinPosX <> -1) and (WinPosY <> -1) then begin
+     fMain.Left:=WinPosX;
+     fMain.Top:=WinPosY;
+  end;
+end;
+
+procedure TfMain.FormWindowStateChange(Sender: TObject);
+begin
+  WinPosX:=fMain.Left;
+  WinPosY:=fMain.Top;
 end;
 
 procedure TfMain.LazSerial1RxData(Sender: TObject);

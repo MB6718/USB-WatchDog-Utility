@@ -12,6 +12,8 @@ object fMain: TfMain
   Constraints.MinWidth = 480
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
+  OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
   LCLVersion = '1.8.4.0'
   object PageControl1: TPageControl

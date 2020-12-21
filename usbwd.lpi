@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="34"/>
+      <BuildNr Value="35"/>
       <StringTable CompanyName="MB6718" FileDescription="USBWatchDog v0.1" InternalName="usbwd" LegalCopyright="© 2020, MB6718" OriginalFilename="usbwd" ProductName="USBWatchDog" ProductVersion="0.1"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -74,7 +74,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="usbwd.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -86,6 +86,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="AppConfigs.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

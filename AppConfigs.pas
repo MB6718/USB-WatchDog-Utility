@@ -8,12 +8,19 @@ uses
   classes, sysutils, IniFiles, Dialogs;
 
 const
+  main_section = 'Main';
   app_section = 'App';
+  window_section = 'Window';
+  info_section = 'Info';
 
 var
   INI: TINIFile;
 
+  WinPosX,
+  WinPosY: Integer;
+
   DefaultPort: string;
+
   AutoConnect: boolean;
 
 { Описание прототипов процедур и функций }
@@ -29,6 +36,10 @@ begin
     { AppSection }
     DefaultPort:=INI.ReadString(app_section, 'DefaultPort', '');
     AutoConnect:=INI.ReadBool(app_section, 'AutoConnect', False);
+
+    { WindowSection }
+    WinPosX:=INI.ReadInteger(window_section, 'WindowPositionX', -1);
+    WinPosY:=INI.ReadInteger(window_section, 'WindowPositionY', -1);
   finally
     INI.Free;
   end;
@@ -41,6 +52,10 @@ begin
     { AppSection }
     INI.WriteString(app_section, 'DefaultPort', DefaultPort);
     INI.WriteBool(app_section, 'AutoConnect', AutoConnect);
+
+    { WindowSection }
+    INI.WriteInteger(window_section, 'WindowPositionX', WinPosX);
+    INI.WriteInteger(window_section, 'WindowPositionY', WinPosY);
   finally
     INI.Free;
   end;
