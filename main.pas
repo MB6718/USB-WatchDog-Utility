@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, LazSerial, LazSynaSer;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, LazSerial, LazSynaSer, Log4Pascal;
 
 type
 
@@ -73,7 +73,10 @@ type
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
+    procedure CheckBox4Change(Sender: TObject);
+    procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox7Change(Sender: TObject);
+    procedure CleanLogButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -127,6 +130,7 @@ type
     {$IFDEF WINDOWS} // -- WINDOWS --
       const ConfFile = 'config.ini';
     {$ENDIF}
+    const LogFile = 'Log.log';
 
     { Command list }
     const hard_reset_cmd = $FE;
@@ -177,8 +181,10 @@ end;
 procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
 begin
   WaitingSecLabel.Caption:=IntToStr(WaitingTimeTrackBar.Position * 10) + ' sec';
-  if LazSerial1.Active then
+  if LazSerial1.Active then begin
     SerialSendByte(WaitingTimeTrackBar.Position);
+    Logger.Info('Timeout changet on ' + WaitingSecLabel.Caption);
+  end;
 end;
 
 procedure TfMain.CheckBox7Change(Sender: TObject);
@@ -189,12 +195,43 @@ begin
     CheckBox8.Enabled:=False;
 end;
 
+procedure TfMain.CheckBox4Change(Sender: TObject);
+begin
+  if CheckBox4.Checked then
+    Logger.SetNoisyMode
+  else begin
+    Logger.Info('Disabled logging');
+    Logger.SetQuietMode;
+  end;
+end;
+
+procedure TfMain.CheckBox4Click(Sender: TObject);
+begin
+  if CheckBox4.Checked then
+    Logger.Info('Enabeled logging');
+end;
+
+procedure TfMain.CleanLogButtonClick(Sender: TObject);
+begin
+  ModalResult:=MessageDlg(
+    'Clean log file',
+    'Are you sure a want to clear log file?',
+    mtWarning,
+    mbYesNo,
+    0
+  );
+  if ModalResult = mrYes then
+    Logger.Clear;
+end;
+
 procedure TfMain.FormCreate(Sender: TObject);
 var
   i: integer;
 begin
   fMain.Caption:=AppName + ' ' + AppVers;
   Application.Title:=AppName + ' ' + AppVers;
+
+  Logger:=TLogger.Create(LogFile);
 
   PageControl1.ActivePageIndex:=0;
   device_conn_flag:=False;
@@ -203,8 +240,18 @@ begin
   ReadAppConfigs(ConfFile);
   if AutoConnect then
     CheckBox8.Checked:=True;
+  if UseLog then begin
+    //Logger.SetNoisyMode;
+    Logger.Head('Logging initialized');
+    Logger.Info('Start application');
+    CheckBox4.Checked:=True;
+  end
+  else
+    Logger.SetQuietMode;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
+  Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
+  Logger.Info('Ports: ' + PortSelectorComboBox.Items.Text.Replace(LineEnding, ', '));
   if PortSelectorComboBox.Items.Count > 0 then begin
     PortSelectorComboBox.ItemIndex:=0;
     if DefaultPort <> '' then begin
@@ -212,6 +259,7 @@ begin
       for i:=0 to PortSelectorComboBox.Items.Count - 1 do
         if DefaultPort = PortSelectorComboBox.Items[i] then begin
           PortSelectorComboBox.ItemIndex:=i;
+          Logger.Info('Selected default port: ' + DefaultPort);
           if CheckBox8.Checked then
             StartStopButtonClick(Self);
           Break;
@@ -223,6 +271,7 @@ begin
             'Port "' + DefaultPort + '" not exist, please select other port',
             mtError, [mbOK], 0);
           PortSelectorComboBox.Text:=DefaultPort;
+          Logger.Error('Port "' + DefaultPort + '" not exist');
         end;
     end;
     StartStopButton.Enabled:=True;
@@ -238,6 +287,9 @@ begin
     DeactivateInterface();
   end;
 
+  Logger.Info('Close application');
+  Logger.SetQuietMode;
+
   WinPosX:=fMain.Left;
   WinPosY:=fMain.Top;
   if CheckBox7.Checked then
@@ -245,6 +297,7 @@ begin
   else
     DefaultPort:='';
   AutoConnect:=CheckBox8.Checked;
+  UseLog:=CheckBox4.Checked;
   WriteAppConfigs(ConfFile);
 end;
 
@@ -269,6 +322,7 @@ begin
   command:=LazSerial1.SynSer.RecvByte(0);
   case command of
     $81: begin
+      Logger.Info('Send signal OK');
       IndicatorShape.Brush.Color:=RGBToColor(102, 204, 0); // green
       ButtonsGroupBox.Enabled:=True;
       WaitingTimeGroupBox.Enabled:=True;
@@ -276,6 +330,7 @@ begin
 
       if china_flag > 1 then begin
         FirmwareVersionLabel.Caption:=dfw_label + 'CHINA';
+        Logger.Info('Identified device as CHINA firmware');
         check_flag:=False;
       end;
       device_conn_flag:=True;
@@ -293,6 +348,7 @@ begin
         check_flag:=False;
       if fw_version > 0 then begin
         FirmwareVersionLabel.Caption:=dfw_label + Manufacturer + ' v0.' + IntToStr(fw_version);
+        Logger.Info('Identified device as firmware DEViCOM v0.' + IntToStr(fw_version));
       end
       else begin
         FirmwareVersionLabel.Caption:=dfw_label + Manufacturer;
@@ -318,6 +374,7 @@ begin
       fw_version:=0;
       china_flag:=0;
       check_flag:=True;
+      Logger.Info('Port disconnected');
     end;
     HR_Connect: begin
       DeviceStatusLabel.Caption:=ds_label + 'Try to connect';
@@ -325,6 +382,7 @@ begin
       fw_version:=0;
       china_flag:=0;
       check_flag:=True;
+      Logger.Info('Port connected');
     end;
   end;
 end;
@@ -350,20 +408,26 @@ end;
 
 procedure TfMain.SoftResetButtonClick(Sender: TObject);
 begin
-  if LazSerial1.Active then
+  if LazSerial1.Active then begin
+    Logger.Info('Call "Soft Reset" action');
     SerialSendByte(soft_reset_cmd);
+  end;
 end;
 
 procedure TfMain.HardResetButtonClick(Sender: TObject);
 begin
-  if LazSerial1.Active then
+  if LazSerial1.Active then begin
+    Logger.Info('Call "Hard Reset" action');
     SerialSendByte(hard_reset_cmd);
+  end;
 end;
 
 procedure TfMain.PowerOffButtonClick(Sender: TObject);
 begin
-  if LazSerial1.Active then
+  if LazSerial1.Active then begin
+    Logger.Info('Call "Power OFF" action');
     SerialSendByte(power_off_cmd);
+  end;
 end;
 
 procedure TfMain.StartStopButtonClick(Sender: TObject);
@@ -373,12 +437,14 @@ begin
     Timer2.Enabled:=False;
     DeactivateInterface();
     china_flag:=0;
+    Logger.Info('Close ' + PortSelectorComboBox.Text + ' port and session');
   end
   else begin
     if SerialOpen(PortSelectorComboBox.Text) then begin
       ActivateInterface();
       SerialSendByte(hello_cmd);
       Timer2.Enabled:=True;
+      Logger.Info('Open ' + PortSelectorComboBox.Text + ' port and session');
     end;
   end;
 end;
@@ -417,16 +483,22 @@ procedure TfMain.ModesRadioGroupClick(Sender: TObject);
 begin
   case ModesRadioGroup.ItemIndex of
     0: begin
-        if LazSerial1.Active then
+        if LazSerial1.Active then begin
+          Logger.Info('Call "Change on Soft Mode" action');
           SerialSendByte(soft_mode_cmd);
+        end;
     end;
     1: begin
-        if LazSerial1.Active then
+        if LazSerial1.Active then begin
+          Logger.Info('Call "Change on Hard Mode" action');
           SerialSendByte(hard_mode_cmd);
+        end;
     end;
     2: begin
-        if LazSerial1.Active then
+        if LazSerial1.Active then begin
+          Logger.Info('Call "Change on Power OFF Mode" action');
           SerialSendByte(power_off_mode_cmd);
+        end;
     end;
   end;
 end;
@@ -522,6 +594,7 @@ begin
     except
       on E: Exception do begin
         ShowMessage(E.Message);
+        Logger.Error(E.Message);
         Result:=False;
       end;
     end;
@@ -534,6 +607,7 @@ begin
       LazSerial1.Close;
     except
       on E: Exception do begin
+        Logger.Error(E.Message);
         ShowMessage(E.Message);
       end;
     end;
@@ -546,6 +620,7 @@ begin
       LazSerial1.SynSer.SendByte(Command);
     except
       on E: Exception do begin
+        Logger.Error(E.Message);
         ShowMessage(E.Message);
       end;
     end;

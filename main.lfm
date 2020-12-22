@@ -612,7 +612,8 @@ object fMain: TfMain
         Width = 161
         BorderSpacing.Top = 10
         Caption = 'Use logfile in app directory'
-        Enabled = False
+        OnChange = CheckBox4Change
+        OnClick = CheckBox4Click
         TabOrder = 3
       end
       object CheckBox5: TCheckBox
@@ -652,7 +653,6 @@ object fMain: TfMain
         Width = 25
         BidiMode = bdRightToLeft
         BorderSpacing.Left = 15
-        Enabled = False
         Flat = True
         Glyph.Data = {
           36090000424D3609000000000000360000002800000018000000180000000100
@@ -730,6 +730,7 @@ object fMain: TfMain
           E40099CFF100C1AD9500C7915600BC8C5400BB8A5200DDC6B000E0CBB800DFC9
           B400DFC9B400E0CAB500DECAB700CDA98345B46C00D2D2AD814C
         }
+        OnClick = CleanLogButtonClick
         ParentBidiMode = False
       end
       object Shape2: TShape
