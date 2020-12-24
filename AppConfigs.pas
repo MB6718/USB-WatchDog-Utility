@@ -21,6 +21,8 @@ var
 
   DefaultPort: string;
 
+  MinimizeOnClose,
+  inSysTray,
   UseLog,
   AutoConnect: boolean;
 
@@ -38,6 +40,8 @@ begin
     DefaultPort:=INI.ReadString(app_section, 'DefaultPort', '');
     AutoConnect:=INI.ReadBool(app_section, 'AutoConnect', False);
     UseLog:=INI.ReadBool(app_section, 'UseLog', False);
+    MinimizeOnClose:=INI.ReadBool(app_section, 'MinimizeOnClose', False);
+    inSysTray:=INI.ReadBool(app_section, 'inSysTray', False);
 
     { WindowSection }
     WinPosX:=INI.ReadInteger(window_section, 'WindowPositionX', -1);
@@ -55,6 +59,8 @@ begin
     INI.WriteString(app_section, 'DefaultPort', DefaultPort);
     INI.WriteBool(app_section, 'AutoConnect', AutoConnect);
     INI.WriteBool(app_section, 'UseLog', UseLog);
+    INI.WriteBool(app_section, 'MinimizeOnClose', MinimizeOnClose);
+    INI.WriteBool(app_section, 'inSysTray', inSysTray);
 
     { WindowSection }
     INI.WriteInteger(window_section, 'WindowPositionX', WinPosX);

@@ -10,6 +10,7 @@ object fMain: TfMain
   ClientWidth = 480
   Constraints.MaxWidth = 480
   Constraints.MinWidth = 480
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -626,7 +627,6 @@ object fMain: TfMain
         Width = 139
         BorderSpacing.Top = 10
         Caption = 'Minimize on close app'
-        Enabled = False
         TabOrder = 4
       end
       object CheckBox6: TCheckBox
@@ -639,7 +639,6 @@ object fMain: TfMain
         Width = 148
         BorderSpacing.Top = 10
         Caption = 'Minimize app in SysTray'
-        Enabled = False
         TabOrder = 5
       end
       object CleanLogButton: TSpeedButton
@@ -1214,5 +1213,30 @@ object fMain: TfMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000
     }
+  end
+  object TrayIcon1: TTrayIcon
+    BalloonHint = 'USB WatchDog window is hided!'
+    BalloonTitle = 'USB WatchDog'
+    PopUpMenu = TrayPopupMenu
+    Hint = 'USB WatchDog'
+    OnDblClick = TrayIcon1DblClick
+    left = 272
+    top = 16
+  end
+  object TrayPopupMenu: TPopupMenu
+    left = 240
+    top = 16
+    object TrayMenuItemRestore: TMenuItem
+      Caption = 'Restore'
+      Default = True
+      OnClick = TrayMenuItemRestoreClick
+    end
+    object TrayMenuSep1: TMenuItem
+      Caption = '-'
+    end
+    object TrayMenuItemExit: TMenuItem
+      Caption = 'Exit'
+      OnClick = TrayMenuItemExitClick
+    end
   end
 end

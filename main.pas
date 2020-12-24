@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, LazSerial, LazSynaSer, Log4Pascal;
+  ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
+  Log4Pascal, windows;
 
 type
 
@@ -58,6 +59,7 @@ type
     PingTimeoutLabel: TLabel;
     PingTimeoutSecLabel: TLabel;
     PingTimeoutTrackBar: TTrackBar;
+    PopupMenu1: TPopupMenu;
     PortSelectorComboBox: TComboBox;
     PowerModeRadioGroup: TRadioGroup;
     PowerOffButton: TButton;
@@ -69,6 +71,8 @@ type
     Timer1: TTimer;
     Timer2: TTimer;
     TitleLabel: TLabel;
+    TrayIcon1: TTrayIcon;
+    TrayMenuItemRestore: TMenuItem;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
@@ -77,6 +81,7 @@ type
     procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox7Change(Sender: TObject);
     procedure CleanLogButtonClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -99,6 +104,9 @@ type
     procedure StartStopButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
+    procedure TrayIcon1DblClick(Sender: TObject);
+    procedure TrayMenuItemExitClick(Sender: TObject);
+    procedure TrayMenuItemRestoreClick(Sender: TObject);
     procedure WaitingTimeTrackBarChange(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
@@ -178,6 +186,23 @@ begin
   device_conn_flag:=False;
 end;
 
+procedure TfMain.TrayIcon1DblClick(Sender: TObject);
+begin
+  TrayIcon1.Visible:=False;
+  WindowState:=wsNormal;
+  Show;
+end;
+
+procedure TfMain.TrayMenuItemExitClick(Sender: TObject);
+begin
+  Application.Terminate;
+end;
+
+procedure TfMain.TrayMenuItemRestoreClick(Sender: TObject);
+begin
+  TrayIcon1DblClick(Self);
+end;
+
 procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
 begin
   WaitingSecLabel.Caption:=IntToStr(WaitingTimeTrackBar.Position * 10) + ' sec';
@@ -224,6 +249,20 @@ begin
     Logger.Clear;
 end;
 
+procedure TfMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  if CheckBox5.Checked and CheckBox6.Checked then begin
+    CloseAction:=caNone;
+    TrayIcon1.Visible:=True;
+    Hide;
+  end
+  else
+    if CheckBox5.Checked and (WindowState = wsNormal) then begin
+      CloseAction:=caNone;
+      PostMessage(Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+    end;
+end;
+
 procedure TfMain.FormCreate(Sender: TObject);
 var
   i: integer;
@@ -232,6 +271,8 @@ begin
   Application.Title:=AppName + ' ' + AppVers;
 
   Logger:=TLogger.Create(LogFile);
+  TrayIcon1.Icon:=Application.Icon;
+  TrayIcon1.Hint:=AppName + AppVers;
 
   PageControl1.ActivePageIndex:=0;
   device_conn_flag:=False;
@@ -248,6 +289,10 @@ begin
   end
   else
     Logger.SetQuietMode;
+  if MinimizeOnClose then
+    CheckBox5.Checked:=True;
+  if inSysTray then
+    CheckBox6.Checked:=True;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
@@ -298,6 +343,9 @@ begin
     DefaultPort:='';
   AutoConnect:=CheckBox8.Checked;
   UseLog:=CheckBox4.Checked;
+  MinimizeOnClose:=CheckBox5.Checked;
+  inSysTray:=CheckBox6.Checked;
+
   WriteAppConfigs(ConfFile);
 end;
 
@@ -311,6 +359,11 @@ end;
 
 procedure TfMain.FormWindowStateChange(Sender: TObject);
 begin
+  if CheckBox6.Checked and (WindowState = wsMinimized) then begin
+    TrayIcon1.Visible:=True;
+    TrayIcon1.ShowBalloonHint;
+    Hide;
+  end;
   WinPosX:=fMain.Left;
   WinPosY:=fMain.Top;
 end;
