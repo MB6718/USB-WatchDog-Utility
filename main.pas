@@ -7,9 +7,11 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  Log4Pascal, windows;
+  Log4Pascal, windows, registry;
 
 type
+
+  TRunState = (RunDisable, RunEnable);
 
   { TfMain }
 
@@ -77,6 +79,7 @@ type
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
+    procedure CheckBox2Change(Sender: TObject);
     procedure CheckBox4Change(Sender: TObject);
     procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox7Change(Sender: TObject);
@@ -119,6 +122,7 @@ type
     function SerialOpen(Port: String): boolean;
     procedure SerialClose();
     procedure SerialSendByte(Command: Integer);
+    procedure RegRunKey(RunState: TRunState);
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
@@ -167,6 +171,28 @@ uses
   AppConfigs;
 
 { TfMain }
+
+procedure TfMain.RegRunKey(RunState: TRunState);
+const
+  keypath = '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run';
+var
+  Reg: TRegistry;
+begin
+  Reg:=TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
+  with Reg do begin
+    try
+      RootKey:=HKEY_CURRENT_USER;
+      OpenKey(keypath, false);
+      case RunState of
+        RunDisable: DeleteValue(AppName);
+        RunEnable: WriteString(AppName, '"' + ParamStr(0) + '"');
+      end;
+    finally
+      CloseKey;
+      Free;
+    end;
+  end;
+end;
 
 procedure TfMain.Timer1Timer(Sender: TObject);
 begin
@@ -228,6 +254,14 @@ begin
     Logger.Info('Disabled logging');
     Logger.SetQuietMode;
   end;
+end;
+
+procedure TfMain.CheckBox2Change(Sender: TObject);
+begin
+  if CheckBox2.Checked then
+    RegRunKey(RunEnable)
+  else
+    RegRunKey(RunDisable);
 end;
 
 procedure TfMain.CheckBox4Click(Sender: TObject);
@@ -300,6 +334,10 @@ begin
     //Application.MainFormOnTaskbar:=True;
     PostMessage(Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
   end;
+  if LaunchWithOS then
+    CheckBox2.Checked:=True
+  else
+    RegRunKey(RunDisable);
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
@@ -356,6 +394,7 @@ begin
     WinStartState:='Minimized'
   else
     WinStartState:='Normal';
+  LaunchWithOS:=CheckBox2.Checked;
 
   WriteAppConfigs(ConfFile);
 end;

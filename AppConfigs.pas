@@ -22,6 +22,7 @@ var
   WinStartState,
   DefaultPort: string;
 
+  LaunchWithOS,
   MinimizeOnClose,
   inSysTray,
   UseLog,
@@ -43,6 +44,7 @@ begin
     UseLog:=INI.ReadBool(app_section, 'UseLog', False);
     MinimizeOnClose:=INI.ReadBool(app_section, 'MinimizeOnClose', False);
     inSysTray:=INI.ReadBool(app_section, 'inSysTray', False);
+    LaunchWithOS:=INI.ReadBool(app_section, 'LaunchWithOS', False);
 
     { WindowSection }
     WinStartState:=INI.ReadString(window_section, 'WindowStartState', 'normal');
@@ -63,6 +65,7 @@ begin
     INI.WriteBool(app_section, 'UseLog', UseLog);
     INI.WriteBool(app_section, 'MinimizeOnClose', MinimizeOnClose);
     INI.WriteBool(app_section, 'inSysTray', inSysTray);
+    INI.WriteBool(app_section, 'LaunchWithOS', LaunchWithOS);
 
     { WindowSection }
     INI.WriteString(window_section, 'WindowStartState', WinStartState);
