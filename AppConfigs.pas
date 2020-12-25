@@ -19,6 +19,7 @@ var
   WinPosX,
   WinPosY: Integer;
 
+  WinStartState,
   DefaultPort: string;
 
   MinimizeOnClose,
@@ -44,6 +45,7 @@ begin
     inSysTray:=INI.ReadBool(app_section, 'inSysTray', False);
 
     { WindowSection }
+    WinStartState:=INI.ReadString(window_section, 'WindowStartState', 'normal');
     WinPosX:=INI.ReadInteger(window_section, 'WindowPositionX', -1);
     WinPosY:=INI.ReadInteger(window_section, 'WindowPositionY', -1);
   finally
@@ -63,6 +65,7 @@ begin
     INI.WriteBool(app_section, 'inSysTray', inSysTray);
 
     { WindowSection }
+    INI.WriteString(window_section, 'WindowStartState', WinStartState);
     INI.WriteInteger(window_section, 'WindowPositionX', WinPosX);
     INI.WriteInteger(window_section, 'WindowPositionY', WinPosY);
   finally

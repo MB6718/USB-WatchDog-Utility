@@ -293,6 +293,13 @@ begin
     CheckBox5.Checked:=True;
   if inSysTray then
     CheckBox6.Checked:=True;
+  if LowerCase(WinStartState) = 'minimized' then begin
+    CheckBox1.Checked:=True;
+    //Application.ShowMainForm:=False;
+    //Application.Minimize;
+    //Application.MainFormOnTaskbar:=True;
+    PostMessage(Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+  end;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
@@ -345,12 +352,17 @@ begin
   UseLog:=CheckBox4.Checked;
   MinimizeOnClose:=CheckBox5.Checked;
   inSysTray:=CheckBox6.Checked;
+  if CheckBox1.Checked then
+    WinStartState:='Minimized'
+  else
+    WinStartState:='Normal';
 
   WriteAppConfigs(ConfFile);
 end;
 
 procedure TfMain.FormShow(Sender: TObject);
 begin
+  WindowState:=wsNormal;
   if (WinPosX <> -1) and (WinPosY <> -1) then begin
      fMain.Left:=WinPosX;
      fMain.Top:=WinPosY;

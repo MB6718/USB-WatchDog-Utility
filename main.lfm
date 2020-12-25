@@ -574,7 +574,6 @@ object fMain: TfMain
         BorderSpacing.Left = 20
         BorderSpacing.Top = 30
         Caption = 'App launch in minimized state'
-        Enabled = False
         TabOrder = 0
       end
       object CheckBox2: TCheckBox
