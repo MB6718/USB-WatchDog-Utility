@@ -84,6 +84,7 @@ type
     procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox7Change(Sender: TObject);
     procedure CleanLogButtonClick(Sender: TObject);
+    procedure DefaultButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -281,6 +282,32 @@ begin
   );
   if ModalResult = mrYes then
     Logger.Clear;
+end;
+
+procedure TfMain.DefaultButtonClick(Sender: TObject);
+var
+  i: Integer;
+begin
+  ModalResult:=MessageDlg(
+    'Default app settings',
+    'Are you sure you want to set the default app settings?',
+    mtInformation,
+    mbYesNo,
+    0
+  );
+  if ModalResult = mrYes then begin
+    {for i:=1 to 8 do
+      (FindComponent('CheckBox' + IntToStr(i)) as TCheckBox).Checked:=False;}
+    for i:=0 to ComponentCount - 1 do
+      if (Components[i] is TCheckBox) and (PageControl1.ActivePage = AppTabSheet) then
+        (Components[i] as TCheckBox).Checked:=False;
+    WaitingTimeTrackBar.Position:=180;
+    PowerModeRadioGroup.ItemIndex:=0;
+    ModesRadioGroup.ItemIndex:=1;
+    {PingTimeoutTrackBar.Position:=1000;
+    NetAddressEdit.Text:=EditBlank;
+    NetMonitoringCheckBox.Checked:=False;}
+  end;
 end;
 
 procedure TfMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
