@@ -12,6 +12,7 @@ uses
 type
 
   TRunState = (RunDisable, RunEnable);
+  TSendCommand = (SoftResetCmd, HardResetCmd, PowerOffCmd);
 
   { TfMain }
 
@@ -133,6 +134,7 @@ type
     function ValidURL(URL: String): Boolean;
     procedure ActivatePingInterface();
     procedure DeactivatePingInterface();
+    procedure SerialSendCommand(Command: TSendCommand);
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
@@ -281,6 +283,25 @@ begin
   PingTimeoutTrackBar.Enabled:=False;
 end;
 
+procedure TfMain.SerialSendCommand(Command: TSendCommand);
+begin
+  if LazSerial1.Active then
+    case Command of
+      SoftResetCmd: begin
+        Logger.Info('Call "Soft Reset" action');
+        SerialSendByte(soft_reset_cmd);
+      end;
+      HardResetCmd: begin
+        Logger.Info('Call "Hard Reset" action');
+        SerialSendByte(hard_reset_cmd);
+      end;
+      PowerOffCmd: begin
+        Logger.Info('Call "Power OFF" action');
+        SerialSendByte(power_off_cmd);
+      end;
+    end;
+end;
+
 procedure TfMain.Timer1Timer(Sender: TObject);
 begin
   CopiedLabel.Visible:=False;
@@ -307,26 +328,7 @@ begin
           PingStatusIndicatorLabel.Font.Color:=clRed;
           PingStatusIndicatorLabel.Caption:='No response in: ' + IntToStr(PingSend.Timeout) + ' ms';
           Logger.Info('Ping on ' + NetAddressEdit.Text + ' - ' + PingStatusIndicatorLabel.Caption);
-          case ModesRadioGroup.ItemIndex of
-            0: begin
-                if LazSerial1.Active then begin
-                  Logger.Info('Call "Soft Reset" action');
-                  SerialSendByte(soft_reset_cmd);
-                end;
-            end;
-            1: begin
-                if LazSerial1.Active then begin
-                  Logger.Info('Call "Hard Reset" action');
-                  SerialSendByte(hard_reset_cmd);
-                end;
-            end;
-            2: begin
-                if LazSerial1.Active then begin
-                  Logger.Info('Call "Power OFF" action');
-                  SerialSendByte(power_off_cmd);
-                end;
-            end;
-          end;
+          SerialSendCommand(TSendCommand(ModesRadioGroup.ItemIndex));
         end;
       end;
     finally
@@ -486,7 +488,6 @@ begin
   if AutoConnect then
     CheckBox8.Checked:=True;
   if UseLog then begin
-    //Logger.SetNoisyMode;
     Logger.Head('Logging initialized');
     Logger.Info('Start application');
     CheckBox4.Checked:=True;
@@ -499,9 +500,6 @@ begin
     CheckBox6.Checked:=True;
   if LowerCase(WinStartState) = 'minimized' then begin
     CheckBox1.Checked:=True;
-    //Application.ShowMainForm:=False;
-    //Application.Minimize;
-    //Application.MainFormOnTaskbar:=True;
     PostMessage(Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
   end;
   if LaunchWithOS then
@@ -630,20 +628,19 @@ begin
       WaitingTimeTrackBar.OnChange(Self);
     end;
     $80: begin
-      ModesRadioGroup.Enabled:=True;
-      PowerModeRadioGroup.Enabled:=True;
-      PowerModeRadioGroupClick(Self);
-
       if check_flag then
         check_flag:=False;
       if fw_version > 0 then begin
         FirmwareVersionLabel.Caption:=dfw_label + Manufacturer + ' v0.' + IntToStr(fw_version);
-        Logger.Info('Identified device as firmware DEViCOM v0.' + IntToStr(fw_version));
+        Logger.Info('Identified device as firmware MB6718 v0.' + IntToStr(fw_version));
       end
       else begin
         FirmwareVersionLabel.Caption:=dfw_label + Manufacturer;
         SerialSendByte(get_device_version_cmd);
       end;
+      ModesRadioGroup.Enabled:=True;
+      PowerModeRadioGroup.Enabled:=True;
+      PowerModeRadioGroupClick(Self);
       Sleep(200);
       ModesRadioGroup.OnClick(Self);
     end;
@@ -698,26 +695,17 @@ end;
 
 procedure TfMain.SoftResetButtonClick(Sender: TObject);
 begin
-  if LazSerial1.Active then begin
-    Logger.Info('Call "Soft Reset" action');
-    SerialSendByte(soft_reset_cmd);
-  end;
+  SerialSendCommand(SoftResetCmd);
 end;
 
 procedure TfMain.HardResetButtonClick(Sender: TObject);
 begin
-  if LazSerial1.Active then begin
-    Logger.Info('Call "Hard Reset" action');
-    SerialSendByte(hard_reset_cmd);
-  end;
+  SerialSendCommand(HardResetCmd);
 end;
 
 procedure TfMain.PowerOffButtonClick(Sender: TObject);
 begin
-  if LazSerial1.Active then begin
-    Logger.Info('Call "Power OFF" action');
-    SerialSendByte(power_off_cmd);
-  end;
+  SerialSendCommand(PowerOffCmd);
 end;
 
 procedure TfMain.StartStopButtonClick(Sender: TObject);
@@ -771,26 +759,21 @@ end;
 
 procedure TfMain.ModesRadioGroupClick(Sender: TObject);
 begin
-  case ModesRadioGroup.ItemIndex of
-    0: begin
-        if LazSerial1.Active then begin
-          Logger.Info('Call "Change on Soft Mode" action');
-          SerialSendByte(soft_mode_cmd);
-        end;
+  if LazSerial1.Active then
+    case ModesRadioGroup.ItemIndex of
+      0: begin
+        Logger.Info('Call "Change on Soft Mode" action');
+        SerialSendByte(soft_mode_cmd);
+      end;
+      1: begin
+        Logger.Info('Call "Change on Hard Mode" action');
+        SerialSendByte(hard_mode_cmd);
+      end;
+      2: begin
+        Logger.Info('Call "Change on Power OFF Mode" action');
+        SerialSendByte(power_off_mode_cmd);
+      end;
     end;
-    1: begin
-        if LazSerial1.Active then begin
-          Logger.Info('Call "Change on Hard Mode" action');
-          SerialSendByte(hard_mode_cmd);
-        end;
-    end;
-    2: begin
-        if LazSerial1.Active then begin
-          Logger.Info('Call "Change on Power OFF Mode" action');
-          SerialSendByte(power_off_mode_cmd);
-        end;
-    end;
-  end;
 end;
 
 procedure TfMain.NetAddressEditClick(Sender: TObject);
