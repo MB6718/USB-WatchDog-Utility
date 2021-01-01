@@ -16,6 +16,9 @@ const
 var
   INI: TINIFile;
 
+  ResetTimeOut,
+  ResetMode,
+  USBPwrMode,
   PingTimeOut,
   WinPosX,
   WinPosY: Integer;
@@ -45,6 +48,9 @@ begin
     NetMonitoring:=INI.ReadBool(main_section, 'NetMonitoring', False);
     NetAddress:=INI.ReadString(main_section, 'NetAddress', '');
     PingTimeOut:=INI.ReadInteger(main_section, 'PingTimeOut', 1000);
+    ResetTimeOut:=INI.ReadInteger(main_section, 'ResetTimeOut', 180); // sec
+    ResetMode:=INI.ReadInteger(main_section, 'ResetMode', 1); // A0 - 0; A1 - 1
+    USBPwrMode:=INI.ReadInteger(main_section, 'USBPwrMode', 0); // USB off - 0; USB on - 1
 
     { AppSection }
     DefaultPort:=INI.ReadString(app_section, 'DefaultPort', '');
@@ -71,6 +77,9 @@ begin
     INI.WriteBool(main_section, 'NetMonitoring', NetMonitoring);
     INI.WriteString(main_section, 'NetAddress', NetAddress);
     INI.WriteInteger(main_section, 'PingTimeOut', PingTimeOut);
+    INI.WriteInteger(main_section, 'ResetTimeout', ResetTimeOut);
+    INI.WriteInteger(main_section, 'ResetMode', ResetMode);
+    INI.WriteInteger(main_section, 'USBPwrMode', USBPwrMode);
 
     { AppSection }
     INI.WriteString(app_section, 'DefaultPort', DefaultPort);

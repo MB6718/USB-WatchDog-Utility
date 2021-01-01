@@ -473,6 +473,16 @@ begin
   china_flag:=0;
 
   ReadAppConfigs(ConfFile);
+  if USBPwrMode > 0 then begin
+    PowerModeRadioGroup.ItemIndex:=USBPwrMode;
+    PowerOffButton.Enabled:=True;
+    ModesRadioGroup.Controls[2].Enabled:=True;
+  end
+  else begin
+    PowerOffButton.Enabled:=False;
+    ModesRadioGroup.Controls[2].Enabled:=False;
+  end;
+  ModesRadioGroup.ItemIndex:=ResetMode;
   if AutoConnect then
     CheckBox8.Checked:=True;
   if UseLog then begin
@@ -547,6 +557,9 @@ begin
   Logger.Info('Close application');
   Logger.SetQuietMode;
 
+  ResetTimeout:=WaitingTimeTrackBar.Position * 10;
+  USBPwrMode:=PowerModeRadioGroup.ItemIndex;
+  ResetMode:=ModesRadioGroup.ItemIndex;
   WinPosX:=fMain.Left;
   WinPosY:=fMain.Top;
   if CheckBox7.Checked then
