@@ -203,6 +203,7 @@ object fMain: TfMain
           BorderSpacing.Left = 15
           BorderSpacing.Top = 3
           Caption = 'Network monitoring'
+          OnChange = NetMonitoringCheckBoxChange
           TabOrder = 0
         end
         object NetAddressEdit: TEdit
@@ -213,12 +214,20 @@ object fMain: TfMain
           AnchorSideRight.Side = asrBottom
           Left = 157
           Height = 23
+          Hint = 'Example of correct addresses:'#13#10'www.google.com'#13#10'google.com'#13#10'http://google.com'#13#10'8.8.8.8'
           Top = 1
           Width = 264
           Anchors = [akTop, akRight]
           BorderSpacing.Right = 15
+          Font.Color = clSilver
+          OnClick = NetAddressEditClick
+          OnExit = NetAddressEditExit
+          OnKeyPress = NetAddressEditKeyPress
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
           TabOrder = 1
-          Text = 'paste here ip or dns address'
+          Text = 'paste here IP or URL address'
         end
         object PingTimeoutTrackBar: TTrackBar
           AnchorSideLeft.Control = PingTimeoutLabel
@@ -232,6 +241,7 @@ object fMain: TfMain
           Frequency = 50
           Max = 2000
           Min = 1
+          OnChange = PingTimeoutTrackBarChange
           Position = 1000
           TickStyle = tsNone
           Anchors = [akTop, akLeft, akRight]

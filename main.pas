@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  Log4Pascal, windows, registry;
+  Log4Pascal, windows, registry, RegExpr, pingsend;
 
 type
 
@@ -100,6 +100,11 @@ type
     procedure m3LabelClick(Sender: TObject);
     procedure m5LabelClick(Sender: TObject);
     procedure ModesRadioGroupClick(Sender: TObject);
+    procedure NetAddressEditClick(Sender: TObject);
+    procedure NetAddressEditExit(Sender: TObject);
+    procedure NetAddressEditKeyPress(Sender: TObject; var Key: char);
+    procedure NetMonitoringCheckBoxChange(Sender: TObject);
+    procedure PingTimeoutTrackBarChange(Sender: TObject);
     procedure PowerModeRadioGroupClick(Sender: TObject);
     procedure PowerOffButtonClick(Sender: TObject);
     procedure ReScanButtonClick(Sender: TObject);
@@ -120,10 +125,14 @@ type
   private
     procedure ActivateInterface();
     procedure DeactivateInterface();
-    function SerialOpen(Port: String): boolean;
+    function SerialOpen(Port: String): Boolean;
     procedure SerialClose();
-    procedure SerialSendByte(Command: Integer);
+    procedure SerialSendByte(CommandByte: Integer);
     procedure RegRunKey(RunState: TRunState);
+    procedure NetEditShowHint();
+    function ValidURL(URL: String): Boolean;
+    procedure ActivatePingInterface();
+    procedure DeactivatePingInterface();
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
@@ -133,6 +142,7 @@ type
     const xmr_wallet = 'xmr_address';
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
+    const PingAddressBlank = 'paste here IP or URL address';
 
     { Config file }
     {$IFDEF UNIX} // -- UNIX --
@@ -157,10 +167,13 @@ type
     const check_device_cmd = $81;
     const get_device_version_cmd = $88;
 
+    const clEnabled = $00AA00;
+
     var device_conn_flag: Boolean;
     var china_flag: Integer;
     var check_flag: Boolean;
     var fw_version: Integer;
+    var NetHint: THintWindow;
   end;
 
 var
@@ -195,6 +208,79 @@ begin
   end;
 end;
 
+procedure TfMain.NetEditShowHint();
+var
+  rect: TRect;
+begin
+  NetAddressEdit.SetFocus;
+  if NetHint <> nil then
+    NetHint.ReleaseHandle;
+  rect:=NetHint.CalcHintRect(0, NetAddressEdit.Hint, nil);
+  OffsetRect(
+    rect,
+    fMain.Left + PingGroupBox.Left + NetAddressEdit.Left + 8,
+    fMain.Top + PingGroupBox.Top + NetAddressEdit.Top + rect.Height + 8
+    //fMain.Top + PingGroupBox.Top + NetAddressEdit.Top + rect.Height + NetAddressEdit.Height
+  );
+  with NetHint do begin
+    Color:=RGB(236, 226, 157);
+    Font.Color:=clBlack;
+    HideInterval:=5000;
+    AutoHide:=True;
+    ActivateHint(rect, NetAddressEdit.Hint);
+  end;
+  NetMonitoringCheckBox.Checked:=False;
+end;
+
+function TfMain.ValidURL(URL: String): Boolean;
+const
+  regexp_string = '(^(([htps]{4,5}):\/{2})(([a-z0-9$_\.\+!\*\#39\(\),;\?&=-]|%[0-9a-f]{2})+(:([a-z0-9$_\.\+!\*\#39\(\),;\?&=-]|%[0-9a-f]{2})+)?@)?((([a-z0-9]\.|[a-z0-9][a-z0-9-]*[a-z0-9]\.)*[a-z][a-z0-9-]*[a-z0-9]|((\d|[1-9]\d|1\d{2}|2[0-4][0-9]|25[0-5])\.){3}(\d|[1-9]\d|1\d{2}|2[0-4][0-9]|25[0-5]))(:\d+)?)(((\/+([a-z0-9$_\.\+!\*\#39\(\),;:@&=-]|%[0-9a-f]{2})*)*(\?([a-z0-9$_\.\+!\*\#39\(\),;:@&=-]|%[0-9a-f]{2})*)?)?)?(#([a-z0-9$_\.\+!\*\#39\(\),;:@&=-]|%[0-9a-f]{2})*)?)$';
+var
+  regexpr: TRegExpr;
+  address_string: String;
+begin
+  regexpr:=TRegExpr.Create(regexp_string);
+  try
+    if pos('.', URL) = 0 then
+      address_string:=''
+    else
+      if pos('http://', URL) = 0 then
+        address_string:='http://' + URL
+      else
+        address_string:=URL;
+    if regexpr.exec(address_string) then
+      Result:=True
+    else
+      Result:=False;
+  finally
+    regexpr.Free();
+  end;
+end;
+
+procedure TfMain.ActivatePingInterface();
+begin
+  NetAddressEdit.Enabled:=False;
+  NetAddressEdit.ShowHint:=False;
+  PingTimeoutLabel.Enabled:=True;
+  PingTimeoutSecLabel.Enabled:=True;
+  PingStatusLabel.Enabled:=True;
+  PingStatusIndicatorLabel.Caption:='Enabled';
+  PingStatusIndicatorLabel.Font.Color:=clEnabled;
+  PingTimeoutTrackBar.Enabled:=True;
+end;
+
+procedure TfMain.DeactivatePingInterface();
+begin
+  NetAddressEdit.Enabled:=True;
+  NetAddressEdit.ShowHint:=True;
+  PingTimeoutLabel.Enabled:=False;
+  PingStatusLabel.Enabled:=False;
+  PingTimeoutSecLabel.Enabled:=False;
+  PingStatusIndicatorLabel.Caption:='Disabled';
+  PingStatusIndicatorLabel.Font.Color:=clGray;
+  PingTimeoutTrackBar.Enabled:=False;
+end;
+
 procedure TfMain.Timer1Timer(Sender: TObject);
 begin
   CopiedLabel.Visible:=False;
@@ -202,7 +288,52 @@ begin
 end;
 
 procedure TfMain.Timer2Timer(Sender: TObject);
+var
+  PingSend: TPINGSend;
+  PingTime: Integer;
 begin
+  if NetMonitoringCheckBox.Checked and device_conn_flag then begin
+    PingSend:=TPINGSend.Create;
+    try
+      PingSend.Timeout:=PingTimeoutTrackBar.Position;
+      if PingSend.Ping(NetAddressEdit.Text) then begin
+        PingStatusIndicatorLabel.Font.Color:=clEnabled;
+        PingTime:=PingSend.PingTime;
+        if PingTime < PingSend.Timeout then begin
+          PingStatusIndicatorLabel.Caption:='Reply from in: ' + IntToStr(PingTime) + ' ms';
+          Logger.Info('Ping on ' + NetAddressEdit.Text + ' - ' + PingStatusIndicatorLabel.Caption);
+        end
+        else begin
+          PingStatusIndicatorLabel.Font.Color:=clRed;
+          PingStatusIndicatorLabel.Caption:='No response in: ' + IntToStr(PingSend.Timeout) + ' ms';
+          Logger.Info('Ping on ' + NetAddressEdit.Text + ' - ' + PingStatusIndicatorLabel.Caption);
+          case ModesRadioGroup.ItemIndex of
+            0: begin
+                if LazSerial1.Active then begin
+                  Logger.Info('Call "Soft Reset" action');
+                  SerialSendByte(soft_reset_cmd);
+                end;
+            end;
+            1: begin
+                if LazSerial1.Active then begin
+                  Logger.Info('Call "Hard Reset" action');
+                  SerialSendByte(hard_reset_cmd);
+                end;
+            end;
+            2: begin
+                if LazSerial1.Active then begin
+                  Logger.Info('Call "Power OFF" action');
+                  SerialSendByte(power_off_cmd);
+                end;
+            end;
+          end;
+        end;
+      end;
+    finally
+      PingSend.Free;
+    end;
+  end;
+
   if device_conn_flag then
     SerialSendByte(hello_cmd)
   else begin
@@ -304,9 +435,9 @@ begin
     WaitingTimeTrackBar.Position:=180;
     PowerModeRadioGroup.ItemIndex:=0;
     ModesRadioGroup.ItemIndex:=1;
-    {PingTimeoutTrackBar.Position:=1000;
-    NetAddressEdit.Text:=EditBlank;
-    NetMonitoringCheckBox.Checked:=False;}
+    PingTimeoutTrackBar.Position:=1000;
+    NetAddressEdit.Text:=PingAddressBlank;
+    NetMonitoringCheckBox.Checked:=False;
   end;
 end;
 
@@ -332,6 +463,8 @@ begin
   Application.Title:=AppName + ' ' + AppVers;
 
   Logger:=TLogger.Create(LogFile);
+  NetHint:=HintWindowClass.Create(Self);
+
   TrayIcon1.Icon:=Application.Icon;
   TrayIcon1.Hint:=AppName + AppVers;
 
@@ -365,6 +498,11 @@ begin
     CheckBox2.Checked:=True
   else
     RegRunKey(RunDisable);
+  if NetAddress <> '' then
+    NetAddressEdit.Text:=NetAddress;
+  if PingTimeOut > 0 then
+    PingTimeoutTrackBar.Position:=PingTimeOut;
+  NetMonitoringCheckBox.Checked:=NetMonitoring;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
@@ -404,6 +542,8 @@ begin
     DeactivateInterface();
   end;
 
+  NetHint.Free;
+
   Logger.Info('Close application');
   Logger.SetQuietMode;
 
@@ -422,6 +562,12 @@ begin
   else
     WinStartState:='Normal';
   LaunchWithOS:=CheckBox2.Checked;
+  NetMonitoring:=NetMonitoringCheckBox.Checked;
+  if NetMonitoring and (NetAddressEdit.Text <> '') and (NetAddressEdit.Text <> PingAddressBlank) then
+    NetAddress:=NetAddressEdit.Text
+  else
+    NetAddress:='';
+  PingTimeOut:=PingTimeoutTrackBar.Position;
 
   WriteAppConfigs(ConfFile);
 end;
@@ -634,6 +780,56 @@ begin
   end;
 end;
 
+procedure TfMain.NetAddressEditClick(Sender: TObject);
+begin
+  if NetAddressEdit.Text = PingAddressBlank then
+    NetAddressEdit.Text:='';
+end;
+
+procedure TfMain.NetAddressEditExit(Sender: TObject);
+begin
+  if NetHint <> nil then
+    NetHint.ReleaseHandle;
+  if NetAddressEdit.Text = '' then begin
+    NetAddressEdit.Text:=PingAddressBlank;
+    NetAddressEdit.Font.Color:=clSilver;
+  end;
+end;
+
+procedure TfMain.NetAddressEditKeyPress(Sender: TObject; var Key: char);
+begin
+  NetAddressEdit.Font.Color:=clDefault;
+end;
+
+procedure TfMain.NetMonitoringCheckBoxChange(Sender: TObject);
+begin
+  if NetMonitoringCheckBox.Checked then
+    if (NetAddressEdit.Text = PingAddressBlank) then begin
+      ModalResult:=MessageDlg(
+        'Network address warning.',
+        'No network address entered! Please enter an address.',
+        mtWarning,
+        [mbOK],
+        ''
+      );
+      NetEditShowHint();
+    end
+    else
+      {if IsIP(NetAddressEdit.Text) or IsIP6(NetAddressEdit.Text) then
+        ActivatePingInterface()}
+      if ValidURL(NetAddressEdit.Text) then
+        ActivatePingInterface()
+      else
+        NetEditShowHint()
+  else
+    DeactivatePingInterface();
+end;
+
+procedure TfMain.PingTimeoutTrackBarChange(Sender: TObject);
+begin
+  PingTimeoutSecLabel.Caption:=IntToStr(PingTimeoutTrackBar.Position) + ' ms';
+end;
+
 procedure TfMain.s10LabelClick(Sender: TObject);
 begin
   WaitingTimeTrackBar.Position:=1;
@@ -706,16 +902,18 @@ begin
 
   { PingGroupBox Enable }
   NetMonitoringCheckBox.Enabled:=True;
-  NetAddressEdit.Enabled:=True;
   if NetMonitoringCheckBox.Checked then begin
+    NetAddressEdit.Enabled:=False;
     PingTimeoutTrackBar.Enabled:=True;
     PingTimeoutSecLabel.Enabled:=True;
     PingTimeoutLabel.Enabled:=True;
     PingStatusLabel.Enabled:=True;
-  end;
+  end
+  else
+    NetAddressEdit.Enabled:=True;
 end;
 
-function TfMain.SerialOpen(Port: String): boolean;
+function TfMain.SerialOpen(Port: String): Boolean;
 begin
   LazSerial1.Device:=Port;
   if not LazSerial1.Active then
@@ -744,11 +942,11 @@ begin
     end;
 end;
 
-procedure TfMain.SerialSendByte(Command: Integer);
+procedure TfMain.SerialSendByte(CommandByte: Integer);
 begin
   if LazSerial1.Active then
     try
-      LazSerial1.SynSer.SendByte(Command);
+      LazSerial1.SynSer.SendByte(CommandByte);
     except
       on E: Exception do begin
         Logger.Error(E.Message);

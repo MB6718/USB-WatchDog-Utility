@@ -16,12 +16,15 @@ const
 var
   INI: TINIFile;
 
+  PingTimeOut,
   WinPosX,
   WinPosY: Integer;
 
+  NetAddress,
   WinStartState,
   DefaultPort: string;
 
+  NetMonitoring,
   LaunchWithOS,
   MinimizeOnClose,
   inSysTray,
@@ -38,6 +41,11 @@ procedure ReadAppConfigs(ConfigFile: string);
 begin
   INI:=TINIFile.Create(ExtractFilePath(ParamStr(0)) + ConfigFile);
   try
+    { MainSection }
+    NetMonitoring:=INI.ReadBool(main_section, 'NetMonitoring', False);
+    NetAddress:=INI.ReadString(main_section, 'NetAddress', '');
+    PingTimeOut:=INI.ReadInteger(main_section, 'PingTimeOut', 1000);
+
     { AppSection }
     DefaultPort:=INI.ReadString(app_section, 'DefaultPort', '');
     AutoConnect:=INI.ReadBool(app_section, 'AutoConnect', False);
@@ -59,6 +67,11 @@ procedure WriteAppConfigs(ConfigFile: string);
 begin
   INI:=TINIFile.Create(ExtractFilePath(ParamStr(0)) + ConfigFile);
   try
+    { MainSection }
+    INI.WriteBool(main_section, 'NetMonitoring', NetMonitoring);
+    INI.WriteString(main_section, 'NetAddress', NetAddress);
+    INI.WriteInteger(main_section, 'PingTimeOut', PingTimeOut);
+
     { AppSection }
     INI.WriteString(app_section, 'DefaultPort', DefaultPort);
     INI.WriteBool(app_section, 'AutoConnect', AutoConnect);
