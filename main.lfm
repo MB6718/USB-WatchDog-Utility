@@ -897,9 +897,9 @@ object fMain: TfMain
         AnchorSideTop.Control = AboutTabSheet
         Left = 32
         Height = 30
-        Top = 24
+        Top = 20
         Width = 408
-        BorderSpacing.Top = 24
+        BorderSpacing.Top = 20
         Caption = 'USB WatchDog utility v0.1 (Nov 20 2020)'
         Font.Height = -21
         Font.Style = [fsBold]
@@ -911,28 +911,28 @@ object fMain: TfMain
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Control = TitleLabel
         AnchorSideTop.Side = asrBottom
-        Left = 21
-        Height = 75
-        Top = 74
-        Width = 430
+        Left = 55
+        Height = 30
+        Top = 65
+        Width = 362
         Alignment = taCenter
-        BorderSpacing.Top = 20
-        Caption = 'MB6718 presents'#13#10'support@usbwatchdog.ru'#13#10#13#10'If you liked this utility, you can thank its authors.'#13#10'Just send as much as you want to Monero or Ethereum or Bitcoin wallet adresses: '
+        BorderSpacing.Top = 15
+        Caption = 'If you find a bug and want to help in the development of the project,'#13#10'please let us know by e-mail.'
         ParentColor = False
       end
       object XMRWalletLabel: TLabel
         Tag = 1
         AnchorSideLeft.Control = AboutTabSheet
         AnchorSideLeft.Side = asrCenter
-        AnchorSideTop.Control = InfoLabel
+        AnchorSideTop.Control = InfoLabel1
         AnchorSideTop.Side = asrBottom
         Cursor = crHandPoint
         Left = 31
         Height = 13
         Hint = 'Click to copy'
-        Top = 164
+        Top = 163
         Width = 410
-        BorderSpacing.Top = 15
+        BorderSpacing.Top = 5
         Caption = 'V6Sq14vyBmTNj1tU2u7GcgdrF1RBo2rU ... P5b82ZyiLjsXgf47mvWLcegh64w2i6PLd'
         Font.Color = clHighlight
         Font.Height = -11
@@ -954,7 +954,7 @@ object fMain: TfMain
         Left = 118
         Height = 13
         Hint = 'Click to copy'
-        Top = 187
+        Top = 186
         Width = 236
         BorderSpacing.Top = 10
         Caption = '0x7ff6922B03dEe00f597608963CE3e2a1697734'
@@ -975,7 +975,7 @@ object fMain: TfMain
         AnchorSideTop.Side = asrBottom
         Left = 207
         Height = 21
-        Top = 230
+        Top = 229
         Width = 59
         BorderSpacing.Top = 7
         Caption = 'Copied!'
@@ -996,7 +996,7 @@ object fMain: TfMain
         Left = 132
         Height = 13
         Hint = 'Click to copy'
-        Top = 210
+        Top = 209
         Width = 208
         BorderSpacing.Top = 10
         Caption = 'XEeobatKNngk3LETR71Botd6SLpyTRHtb5'
@@ -1009,6 +1009,44 @@ object fMain: TfMain
         OnClick = WalletsLabelClick
         OnMouseLeave = WalletsLabelMouseLeave
         OnMouseMove = WalletsLabelMouseMove
+      end
+      object SupportEmailLabel: TLabel
+        Tag = 1
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = InfoLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 168
+        Height = 13
+        Hint = 'Click to send email'
+        Top = 100
+        Width = 137
+        BorderSpacing.Top = 5
+        Caption = 'support@usbwatchdog.ru'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SupportEmailLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
+      end
+      object InfoLabel1: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = SupportEmailLabel
+        AnchorSideTop.Side = asrBottom
+        Left = 21
+        Height = 30
+        Top = 128
+        Width = 430
+        Alignment = taCenter
+        BorderSpacing.Top = 15
+        Caption = 'If you liked this utility, you can thank its authors.'#13#10'Just send as much as you want to Monero or Ethereum or Bitcoin wallet adresses: '
+        ParentColor = False
       end
     end
   end

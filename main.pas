@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  Log4Pascal, windows, registry, RegExpr, pingsend;
+  Log4Pascal, windows, registry, RegExpr, pingsend, LCLIntf;
 
 type
 
@@ -40,6 +40,7 @@ type
     ImageList1: TImageList;
     IndicatorShape: TShape;
     InfoLabel: TLabel;
+    InfoLabel1: TLabel;
     LazSerial1: TLazSerial;
     m10Label: TLabel;
     m15Label: TLabel;
@@ -75,11 +76,15 @@ type
     Timer2: TTimer;
     TitleLabel: TLabel;
     TrayIcon1: TTrayIcon;
+    TrayMenuItemExit: TMenuItem;
     TrayMenuItemRestore: TMenuItem;
+    TrayMenuSep1: TMenuItem;
+    TrayPopupMenu: TPopupMenu;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
     XMRWalletLabel: TLabel;
+    SupportEmailLabel: TLabel;
     procedure CheckBox2Change(Sender: TObject);
     procedure CheckBox4Change(Sender: TObject);
     procedure CheckBox4Click(Sender: TObject);
@@ -112,6 +117,7 @@ type
     procedure s10LabelClick(Sender: TObject);
     procedure SoftResetButtonClick(Sender: TObject);
     procedure StartStopButtonClick(Sender: TObject);
+    procedure SupportEmailLabelClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1DblClick(Sender: TObject);
@@ -725,6 +731,11 @@ begin
       Logger.Info('Open ' + PortSelectorComboBox.Text + ' port and session');
     end;
   end;
+end;
+
+procedure TfMain.SupportEmailLabelClick(Sender: TObject);
+begin
+  OpenURL('mailto:support@usbwatchdog.ru');
 end;
 
 procedure TfMain.WalletsLabelClick(Sender: TObject);
