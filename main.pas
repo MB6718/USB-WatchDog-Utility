@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  Log4Pascal, windows, registry, RegExpr, pingsend, LCLIntf;
+  Log4Pascal, windows, registry, RegExpr, pingsend, LCLIntf, LCLType;
 
 type
 
@@ -141,6 +141,10 @@ type
     procedure ActivatePingInterface();
     procedure DeactivatePingInterface();
     procedure SerialSendCommand(Command: TSendCommand);
+    function HexToVerStr(IntVersion: Byte): String;
+    function RemainMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType;
+      aTimeOut: Integer): TModalResult;
+    procedure MsgDlgOnTimer(Sender: TObject);
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
@@ -151,6 +155,7 @@ type
     const eth_wallet = 'eth_address';
     const btc_wallet = 'btc_address';
     const PingAddressBlank = 'paste here IP or URL address';
+    const MinFWVers = $02;
 
     { Config file }
     {$IFDEF UNIX} // -- UNIX --
@@ -178,10 +183,16 @@ type
     const clEnabled = $00AA00;
 
     var device_conn_flag: Boolean;
-    var china_flag: Integer;
-    var check_flag: Boolean;
+    var china_flag: Boolean;
+    var basic_func_flag: Boolean;
+    var basic_accept_flag: Boolean;
+    var check_count: Integer;
     var fw_version: Integer;
     var NetHint: THintWindow;
+    var ARemainMsgDlg: TForm;
+    var aRemainMsgDlgCaption,
+        aRemainBtnCaption: String;
+    var aRemainTime: Integer;
   end;
 
 var
@@ -306,6 +317,115 @@ begin
         SerialSendByte(power_off_cmd);
       end;
     end;
+end;
+
+function TfMain.HexToVerStr(IntVersion: Byte): String;
+begin
+  if IntVersion = $00 then Result:='N/A' else
+    Result:='v' + IntToStr(IntVersion div 10) + '.' + IntToStr(IntVersion mod 10);
+end;
+
+function TfMain.RemainMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType;
+  aTimeOut: Integer): TModalResult;
+
+  function FindControlByCaption(const p: TForm; const aCaption: string): TControl;
+  var
+    i: LongInt;
+    c: TControl;
+  begin
+    Result:=nil;
+    if (aCaption = '') or (p = nil) then exit;
+    for i:=0 to p.ControlCount - 1 do begin
+      if p.Controls[i] is TBitBtn then begin
+        c:=TBitBtn(p.Controls[i]);
+        if (CompareText(c.Caption, aCaption) = 0) then
+          Exit(c);
+      end;
+    end;
+  end;
+
+const
+  BtnMargin = 10;
+var
+  Timer: TTimer;
+  Panel: TPanel;
+  YesButton, CancelButton: TButton;
+  Control: TControl;
+begin
+  ARemainMsgDlg:=CreateMessageDialog(aMsgText, aDlgType, [mbYes]);
+  Panel:=TPanel.Create(ARemainMsgDlg);
+  YesButton:=TButton.Create(Panel);
+  CancelButton:=TButton.Create(Panel);
+  Timer:=TTimer.Create(ARemainMsgDlg);
+  Timer.Interval:=1000;
+  Timer.Enabled:=False;
+  Timer.OnTimer:=@MsgDlgOnTimer;
+  aRemainTime:=aTimeOut;
+  aRemainMsgDlgCaption:=aMsgCaption + 'Remain %d sec.';
+  aRemainBtnCaption:='Basic (%d)';
+  with ARemainMsgDlg do begin
+    try
+      Caption:=aRemainMsgDlgCaption;
+      Width:=400;
+      ParentColor:=False;
+      Color:=clWindow;
+      //Position:=poOwnerFormCenter;
+      Control:=FindControlByCaption(ARemainMsgDlg, '&Yes');
+      if ((Control <> nil) and (Control is TBitBtn)) then
+        (Control as TBitBtn).Visible:=False;
+      with Panel do begin
+        Parent:=ARemainMsgDlg;
+        ParentColor:=False;
+        Color:=clDefault;
+        Caption:=' ';
+        Align:=alBottom;
+        Height:=45;
+        BevelInner:=bvLowered;
+        BevelOuter:=bvNone;
+        Name:='Panel';
+      end;
+      with YesButton do begin
+        Parent:=Panel;
+        Width:=100;
+        Left:=CancelButton.Left + CancelButton.Width + Width + BtnMargin;
+        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
+        Caption:=aRemainBtnCaption;
+        ModalResult:=mrIgnore;
+        Font.Style:=[fsBold];
+        Name:='YesButton';
+      end;
+      with CancelButton do begin
+        Parent:=Panel;
+        Width:=100;
+        Left:=ARemainMsgDlg.Width - Width - BtnMargin;
+        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
+        Caption:='Update';
+        ModalResult:=mrYes;
+        Name:='CancelButton';
+        Enabled:=False;
+      end;
+      Timer.Enabled:=True;
+      MsgDlgOnTimer(Self);
+      Result:=ShowModal;
+    finally
+      Timer.Free;
+      Free;
+    end;
+  end;
+end;
+
+procedure TfMain.MsgDlgOnTimer(Sender: TObject);
+var
+  Button: TButton;
+begin
+  with ARemainMsgDlg do begin
+    Caption:=Format(aRemainMsgDlgCaption, [aRemainTime]);
+    Button:=TButton((TPanel(FindComponent('Panel'))).FindComponent('YesButton'));
+    Button.Caption:=Format(aRemainBtnCaption, [aRemainTime]);
+  end;
+  if (aRemainTime = 0) then
+    ARemainMsgDlg.ModalResult:=ID_IGNORE;
+  Dec(aRemainTime);
 end;
 
 procedure TfMain.Timer1Timer(Sender: TObject);
@@ -477,8 +597,6 @@ begin
   TrayIcon1.Hint:=AppName + AppVers;
 
   PageControl1.ActivePageIndex:=0;
-  device_conn_flag:=False;
-  china_flag:=0;
 
   ReadAppConfigs(ConfFile);
   if USBPwrMode > 0 then begin
@@ -611,48 +729,79 @@ end;
 
 procedure TfMain.LazSerial1RxData(Sender: TObject);
 var
-  command: Integer;
-begin
-  command:=LazSerial1.SynSer.RecvByte(0);
-  case command of
+  response: Integer;
+begin { TODO : Очищать буфер во время ожидания RemainMsgDlg }
+  response:=LazSerial1.SynSer.RecvByte(0);
+  case response of
     $81: begin
+      device_conn_flag:=True;
+
       Logger.Info('Send signal OK');
       IndicatorShape.Brush.Color:=RGBToColor(102, 204, 0); // green
       ButtonsGroupBox.Enabled:=True;
       WaitingTimeGroupBox.Enabled:=True;
       DeviceStatusLabel.Caption:=ds_label + 'connected';
 
-      if china_flag > 1 then begin
+      if check_count > 1 then begin
         FirmwareVersionLabel.Caption:=dfw_label + 'CHINA';
         Logger.Info('Identified device as CHINA firmware');
-        check_flag:=False;
+      end
+      else begin
+        SerialSendByte(check_device_cmd);
+        if china_flag then
+          inc(check_count);
       end;
-      device_conn_flag:=True;
-      SerialSendByte(check_device_cmd);
-      if check_flag then
-        inc(china_flag);
+
       WaitingTimeTrackBar.OnChange(Self);
     end;
     $80: begin
-      if check_flag then
-        check_flag:=False;
+      china_flag:=False;
+
       if fw_version > 0 then begin
-        FirmwareVersionLabel.Caption:=dfw_label + Manufacturer + ' v0.' + IntToStr(fw_version);
-        Logger.Info('Identified device as firmware MB6718 v0.' + IntToStr(fw_version));
+        Logger.Info('Identified device as firmware MB6718 ' + HexToVerStr(fw_version));
+        FirmwareVersionLabel.Caption:=dfw_label + Manufacturer + ' ' + HexToVerStr(fw_version);
+        if fw_version < MinFWVers then begin
+          basic_func_flag:=False;
+          if not basic_accept_flag then begin
+            Logger.Info('Firmware version incorrect!');
+            Timer2.Enabled:=False;
+            case RemainMsgDlg(
+              'App warning!',
+              'Current device version is ' + HexToVerStr(fw_version) + LineEnding +
+              'The application requires a device version ' + HexToVerStr(MinFWVers) +
+              ' or higher.' + LineEnding + LineEnding +
+              'Will only basic functions be used (automatically)' + LineEnding +
+              'or check app update now (recommended)?' + LineEnding,
+              mtWarning,
+              5
+            ) of
+              ID_OK, ID_YES: ShowMessage('Pushed by: Update');
+              ID_IGNORE: { nop } ; //ShowMessage('Pushed by: Basic');
+              ID_CANCEL: { nop } ; //ShowMessage('Pushed by: Cancel')
+            end;
+            basic_accept_flag:=True;
+            Timer2.Enabled:=True;
+          end;
+        end
+        else
+          basic_func_flag:=True;
       end
       else begin
         FirmwareVersionLabel.Caption:=dfw_label + Manufacturer;
         SerialSendByte(get_device_version_cmd);
       end;
-      ModesRadioGroup.Enabled:=True;
-      PowerModeRadioGroup.Enabled:=True;
-      PowerModeRadioGroupClick(Self);
-      Sleep(200);
-      ModesRadioGroup.OnClick(Self);
+
+      if basic_func_flag then begin
+        ModesRadioGroup.Enabled:=True;
+        PowerModeRadioGroup.Enabled:=True;
+        PowerModeRadioGroupClick(Self);
+        Sleep(200);
+        ModesRadioGroup.OnClick(Self);
+      end;
     end;
     $01..$7F: begin
-      if china_flag < 2 then
-        fw_version:=command;
+      if check_count < 2 then
+        fw_version:=response;
     end;
   end;
 end;
@@ -665,16 +814,22 @@ begin
       DeviceStatusLabel.Caption:=ds_label + 'Not connected';
       FirmwareVersionLabel.Caption:=dfw_label + 'undefined';
       fw_version:=0;
-      china_flag:=0;
-      check_flag:=True;
+      check_count:=0;
+      china_flag:=True;
+      device_conn_flag:=False;
+      basic_func_flag:=False;
+      basic_accept_flag:=False;
       Logger.Info('Port disconnected');
     end;
     HR_Connect: begin
       DeviceStatusLabel.Caption:=ds_label + 'Try to connect';
       FirmwareVersionLabel.Caption:=dfw_label + 'undefined';
       fw_version:=0;
-      china_flag:=0;
-      check_flag:=True;
+      check_count:=0;
+      china_flag:=True;
+      device_conn_flag:=False;
+      basic_func_flag:=False;
+      basic_accept_flag:=False;
       Logger.Info('Port connected');
     end;
   end;
@@ -720,7 +875,6 @@ begin
     SerialClose();
     Timer2.Enabled:=False;
     DeactivateInterface();
-    china_flag:=0;
     Logger.Info('Close ' + PortSelectorComboBox.Text + ' port and session');
   end
   else begin
