@@ -22,9 +22,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = MainTabSheet
+    ActivePage = AppTabSheet
     Align = alClient
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -609,7 +609,7 @@ object fMain: TfMain
         Width = 173
         BorderSpacing.Top = 10
         Caption = 'Automatically check updates'
-        Enabled = False
+        OnChange = CheckBox3Change
         TabOrder = 2
       end
       object CheckBox4: TCheckBox
@@ -789,7 +789,7 @@ object fMain: TfMain
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 10
         Caption = 'Check updates'
-        Enabled = False
+        OnClick = ChkAppUpdatesButtonClick
         TabOrder = 8
       end
       object DefaultButton: TBitBtn
@@ -1129,12 +1129,28 @@ object fMain: TfMain
       ShowHint = True
       ParentShowHint = False
     end
+    object AppUpdateLabel: TLabel
+      AnchorSideTop.Control = Panel1
+      AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
+      Left = 48
+      Height = 15
+      Top = 9
+      Width = 168
+      Caption = 'App update available, version: '
+      Font.Color = clGreen
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      Visible = False
+      OnClick = AppUpdateLabelClick
+    end
   end
   object Timer1: TTimer
     Enabled = False
     Interval = 2000
     OnTimer = Timer1Timer
-    left = 424
+    left = 440
     top = 16
   end
   object LazSerial1: TLazSerial
@@ -1148,18 +1164,18 @@ object fMain: TfMain
     RcvLineCRLF = False
     OnRxData = LazSerial1RxData
     OnStatus = LazSerial1Status
-    left = 336
+    left = 312
     top = 16
   end
   object Timer2: TTimer
     Enabled = False
     Interval = 2000
     OnTimer = Timer2Timer
-    left = 391
+    left = 408
     top = 16
   end
   object ImageList1: TImageList
-    left = 304
+    left = 280
     top = 16
     Bitmap = {
       4C6903000000100000001000000000000000000000000000000000000000269D
@@ -1267,11 +1283,11 @@ object fMain: TfMain
     PopUpMenu = TrayPopupMenu
     Hint = 'USB WatchDog'
     OnDblClick = TrayIcon1DblClick
-    left = 272
+    left = 248
     top = 16
   end
   object TrayPopupMenu: TPopupMenu
-    left = 240
+    left = 216
     top = 16
     object TrayMenuItemRestore: TMenuItem
       Caption = 'Restore'
@@ -1285,5 +1301,12 @@ object fMain: TfMain
       Caption = 'Exit'
       OnClick = TrayMenuItemExitClick
     end
+  end
+  object Timer3: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = Timer3Timer
+    left = 376
+    top = 16
   end
 end

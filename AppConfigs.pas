@@ -27,6 +27,7 @@ var
   WinStartState,
   DefaultPort: string;
 
+  AutoChkUpdates,
   NetMonitoring,
   LaunchWithOS,
   MinimizeOnClose,
@@ -59,6 +60,7 @@ begin
     MinimizeOnClose:=INI.ReadBool(app_section, 'MinimizeOnClose', False);
     inSysTray:=INI.ReadBool(app_section, 'inSysTray', False);
     LaunchWithOS:=INI.ReadBool(app_section, 'LaunchWithOS', False);
+    AutoChkUpdates:=INI.ReadBool(app_section, 'AutoChkUpdates', False);
 
     { WindowSection }
     WinStartState:=INI.ReadString(window_section, 'WindowStartState', 'normal');
@@ -88,6 +90,7 @@ begin
     INI.WriteBool(app_section, 'MinimizeOnClose', MinimizeOnClose);
     INI.WriteBool(app_section, 'inSysTray', inSysTray);
     INI.WriteBool(app_section, 'LaunchWithOS', LaunchWithOS);
+    INI.WriteBool(app_section, 'AutoChkUpdates', AutoChkUpdates);
 
     { WindowSection }
     INI.WriteString(window_section, 'WindowStartState', WinStartState);

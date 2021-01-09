@@ -7,9 +7,18 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  Log4Pascal, windows, registry, RegExpr, pingsend, LCLIntf, LCLType;
+  RegExpr, windows, registry, pingsend, LCLIntf, LCLType, Log4Pascal, Fpjson,
+  jsonparser, fphttpclient, Types;
 
 type
+
+  TUpdateVersion = record
+    prefix,
+    version,
+    build,
+    date,
+    filename: String;
+  end;
 
   TRunState = (RunDisable, RunEnable);
   TSendCommand = (SoftResetCmd, HardResetCmd, PowerOffCmd);
@@ -41,6 +50,7 @@ type
     IndicatorShape: TShape;
     InfoLabel: TLabel;
     InfoLabel1: TLabel;
+    AppUpdateLabel: TLabel;
     LazSerial1: TLazSerial;
     m10Label: TLabel;
     m15Label: TLabel;
@@ -74,6 +84,7 @@ type
     StartStopButton: TBitBtn;
     Timer1: TTimer;
     Timer2: TTimer;
+    Timer3: TTimer;
     TitleLabel: TLabel;
     TrayIcon1: TTrayIcon;
     TrayMenuItemExit: TMenuItem;
@@ -86,9 +97,11 @@ type
     XMRWalletLabel: TLabel;
     SupportEmailLabel: TLabel;
     procedure CheckBox2Change(Sender: TObject);
+    procedure CheckBox3Change(Sender: TObject);
     procedure CheckBox4Change(Sender: TObject);
     procedure CheckBox4Click(Sender: TObject);
     procedure CheckBox7Change(Sender: TObject);
+    procedure ChkAppUpdatesButtonClick(Sender: TObject);
     procedure CleanLogButtonClick(Sender: TObject);
     procedure DefaultButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -97,6 +110,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
     procedure HardResetButtonClick(Sender: TObject);
+    procedure AppUpdateLabelClick(Sender: TObject);
     procedure LazSerial1RxData(Sender: TObject);
     procedure LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
       const Value: string);
@@ -120,6 +134,7 @@ type
     procedure SupportEmailLabelClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
+    procedure Timer3Timer(Sender: TObject);
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure TrayMenuItemExitClick(Sender: TObject);
     procedure TrayMenuItemRestoreClick(Sender: TObject);
@@ -145,6 +160,12 @@ type
     function RemainMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType;
       aTimeOut: Integer): TModalResult;
     procedure MsgDlgOnTimer(Sender: TObject);
+    function RemainAppUpdateMsgDlg(const aMsgCaption, aMsgText: String;
+      aDlgType: TMsgDlgType; aTimeOut: Integer): TModalResult;
+    procedure AppUpdMsgDlgOnTimer(Sender: TObject);
+    procedure StartAppUpdate(FileName: String);
+    function GetAppUpdates(): TUpdateVersion;
+    function CompareVersion(UpdVers, AppVers: String): Boolean;
   public
     const AppName = 'USB WatchDog';
     const AppVers = 'v0.1';
@@ -189,10 +210,14 @@ type
     var check_count: Integer;
     var fw_version: Integer;
     var NetHint: THintWindow;
-    var ARemainMsgDlg: TForm;
+    var ARemainMsgDlg,
+        ARemainAppUpdateMsgDlg: TForm;
     var aRemainMsgDlgCaption,
-        aRemainBtnCaption: String;
-    var aRemainTime: Integer;
+        aRemainBtnCaption,
+        aRemainAppUpdateMsgDlgCaption,
+        aRemainAppUpdateBtnCaption: String;
+    var aRemainTime,
+        aRemainAppUpdateTime: Integer;
   end;
 
 var
@@ -201,7 +226,7 @@ var
 implementation
 
 uses
-  AppConfigs;
+  AppConfigs, Download;
 
 { TfMain }
 
@@ -428,6 +453,190 @@ begin
   Dec(aRemainTime);
 end;
 
+function TfMain.RemainAppUpdateMsgDlg(const aMsgCaption, aMsgText: String;
+  aDlgType: TMsgDlgType; aTimeOut: Integer): TModalResult;
+
+  function FindControlByCaption(const p: TForm; const aCaption: string): TControl;
+  var
+    i: LongInt;
+    c: TControl;
+  begin
+    Result:=nil;
+    if (aCaption = '') or (p = nil) then exit;
+    for i:=0 to p.ControlCount - 1 do begin
+      if p.Controls[i] is TBitBtn then begin
+        c:=TBitBtn(p.Controls[i]);
+        if (CompareText(c.Caption, aCaption) = 0) then
+          Exit(c);
+      end;
+    end;
+  end;
+
+const
+  BtnMargin = 10;
+var
+  Timer: TTimer;
+  Panel: TPanel;
+  YesButton, CancelButton, RetryButton: TButton;
+  Control: TControl;
+begin
+  ARemainAppUpdateMsgDlg:=CreateMessageDialog(aMsgText + LineEnding, aDlgType, [mbYes]);
+  Panel:=TPanel.Create(ARemainAppUpdateMsgDlg);
+  YesButton:=TButton.Create(Panel);
+  RetryButton:=TButton.Create(Panel);
+  Timer:=TTimer.Create(ARemainAppUpdateMsgDlg);
+  Timer.Interval:=1000;
+  Timer.Enabled:=False;
+  Timer.OnTimer:=@AppUpdMsgDlgOnTimer;
+  aRemainAppUpdateTime:=aTimeOut;
+  aRemainAppUpdateMsgDlgCaption:=aMsgCaption + 'Remain %d sec.';
+  aRemainAppUpdateBtnCaption:='Remind me later (%d)';
+  with ARemainAppUpdateMsgDlg do begin
+    try
+      Caption:=aRemainAppUpdateMsgDlgCaption;
+      Width:=400;
+      ParentColor:=False;
+      Color:=clWindow;
+      //Position:=poOwnerFormCenter;
+      Control:=FindControlByCaption(ARemainAppUpdateMsgDlg, '&Yes');
+      if ((Control <> nil) and (Control is TBitBtn)) then
+        (Control as TBitBtn).Visible:=False;
+      with Panel do begin
+        Parent:=ARemainAppUpdateMsgDlg;
+        ParentColor:=False;
+        Color:=clDefault;
+        Caption:=' ';
+        Align:=alBottom;
+        Height:=45;
+        BevelInner:=bvLowered;
+        BevelOuter:=bvNone;
+        Name:='Panel';
+      end;
+      with RetryButton do begin
+        Parent:=Panel;
+        Width:=130;
+        Left:=ARemainAppUpdateMsgDlg.Width - Width - BtnMargin;
+        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
+        Caption:=aRemainAppUpdateBtnCaption; ;
+        ModalResult:=mrRetry;
+        Font.Style:=[fsBold];
+        Name:='RetryButton';
+      end;
+      with YesButton do begin
+        Parent:=Panel;
+        Width:=80;
+        Left:=RetryButton.Left - Width - BtnMargin;
+        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
+        Caption:='Update';
+        ModalResult:=mrYes;
+        Name:='YesButton';
+      end;
+      Timer.Enabled:=True;
+      AppUpdMsgDlgOnTimer(Self);
+      Result:=ShowModal;
+    finally
+      Timer.Free;
+      Free;
+    end;
+  end;
+end;
+
+procedure TfMain.AppUpdMsgDlgOnTimer(Sender: TObject);
+var
+  Button: TButton;
+begin
+  with ARemainAppUpdateMsgDlg do begin
+    Caption:=Format(aRemainAppUpdateMsgDlgCaption, [aRemainAppUpdateTime]);
+    Button:=TButton((TPanel(FindComponent('Panel'))).FindComponent('RetryButton'));
+    Button.Caption:=Format(aRemainAppUpdateBtnCaption, [aRemainAppUpdateTime]);
+  end;
+  if (aRemainAppUpdateTime = 0) then
+    ARemainAppUpdateMsgDlg.ModalResult:=ID_RETRY;
+  Dec(aRemainAppUpdateTime);
+end;
+
+procedure TfMain.StartAppUpdate(FileName: String);
+const
+  DownloadURL = 'http://localhost:5000/downloads/';
+  SetupFileName = 'setup.exe';
+  CmdParam = '--silent-update';
+begin
+  try
+    fDownload:=TfDownload.Create(Self);
+    with fDownload do begin
+      SetDownload(DownloadURL + FileName, SetupFileName);
+      //SetDownload('http://lg.hosterby.com/100MB.test', 'setup.exe');  // << for test internet connection
+      ShowModal;
+      AppUpdateLabel.Visible:=False;
+    end;
+  finally
+    fDownload.Free;
+  end;
+  ShellExecute(
+    0,
+    'open',
+    PChar(SetupFileName),
+    PChar(CmdParam),
+    PChar(ExtractFilePath(SetupFileName)),
+    1
+  );
+end;
+
+function TfMain.GetAppUpdates(): TUpdateVersion;
+const
+  url = 'http://localhost:5000/update';
+  json_path = 'versions.win.last_stable.';
+var
+  FHTTPClient: TFPHTTPClient;
+  JsonString: String;
+  JSON: TJSONData;
+begin
+  FHTTPClient:=TFPHTTPClient.Create(nil);
+  with Result do
+    try
+      try
+        JsonString:=FHTTPClient.Get(url);
+        Logger.Info('Server connection established.');
+        if (JsonString <> '') then
+          try
+            JSON:=GetJSON(JsonString);
+            with JSON do begin
+              prefix:=FindPath(json_path + 'prefix').AsString;
+              version:=FindPath(json_path + 'version').AsString;
+              build:=FindPath(json_path + 'build').AsString;
+              date:=FindPath(json_path + 'date').AsString;
+              filename:=FindPath(json_path + 'filename').AsString;
+            end;
+          finally
+            JSON.Free;
+          end
+        else
+          raise Exception.Create('Server response is empty!');
+      except
+        on E: Exception do begin
+          Logger.Error(E.Message);
+          MessageDlg('App update error!', E.Message, mtError, [mbOK], 0);
+        end;
+      end;
+    finally
+      FHTTPClient.Free;
+    end;
+end;
+
+function TfMain.CompareVersion(UpdVers, AppVers: String): Boolean;
+var
+  fs: TFormatSettings;
+begin
+  if (UpdVers <> '') then begin
+    fs.DecimalSeparator:='.';
+    if StrToFloat(UpdVers, fs) > StrToFloat(AppVers, fs) then begin
+      Result:=True;
+      Exit();
+    end;
+  end;
+  Result:=False;
+end;
+
 procedure TfMain.Timer1Timer(Sender: TObject);
 begin
   CopiedLabel.Visible:=False;
@@ -472,6 +681,30 @@ begin
   device_conn_flag:=False;
 end;
 
+procedure TfMain.Timer3Timer(Sender: TObject);
+var
+  UpdateVersion: TUpdateVersion;
+begin
+  Timer3.Enabled:=False;
+  UpdateVersion:=GetAppUpdates();
+  with UpdateVersion do
+    if CompareVersion(version, Copy(AppVers, 2, 4)) then begin
+      AppUpdateLabel.Visible:=True;
+      AppUpdateLabel.Caption:='App update available, version: v' + version;
+      case RemainAppUpdateMsgDlg(
+        'App Update',
+        'Update available. Update app now?',
+        mtConfirmation,
+        10
+      ) of
+        ID_YES: StartAppUpdate(filename);
+        ID_RETRY: { nop };
+      end;
+    end;
+  Timer3.Interval:=21600000; // 6 hours in ms.
+  Timer3.Enabled:=True;
+end;
+
 procedure TfMain.TrayIcon1DblClick(Sender: TObject);
 begin
   TrayIcon1.Visible:=False;
@@ -506,6 +739,41 @@ begin
     CheckBox8.Enabled:=False;
 end;
 
+procedure TfMain.ChkAppUpdatesButtonClick(Sender: TObject);
+var
+  UpdateVersion: TUpdateVersion;
+begin
+  Logger.Info('"Check Update" button pushed.');
+  UpdateVersion:=GetAppUpdates();
+  with UpdateVersion do
+    if version <> '' then
+      if CompareVersion(version, Copy(AppVers, 2, 4)) then begin
+        Logger.Info('Update is available. Current app version: ' + AppVers +
+          ' New version: ' + version);
+        case MessageDlg(
+          'App update',
+          'A new version of the application is available.' + LineEnding + LineEnding +
+          'Prefix: ' + prefix + LineEnding +
+          'Version: ' + version + LineEnding +
+          'Build: ' + build + LineEnding +
+          'Release Date: ' + date + LineEnding + LineEnding +
+          'Update now?',
+          mtConfirmation, mbYesNo, 0
+        ) of
+          ID_YES: StartAppUpdate(filename);
+          ID_NO, ID_CANCEL: Logger.Info('Update canceled.');
+        end;
+      end
+      else begin
+        Logger.Info('No update required.');
+        MessageDlg(
+          'App update',
+          'No update required.' + LineEnding +
+          'The current application version is the latest stable version.',
+          mtInformation, [mbOK], 0);
+      end;
+end;
+
 procedure TfMain.CheckBox4Change(Sender: TObject);
 begin
   if CheckBox4.Checked then
@@ -522,6 +790,16 @@ begin
     RegRunKey(RunEnable)
   else
     RegRunKey(RunDisable);
+end;
+
+procedure TfMain.CheckBox3Change(Sender: TObject);
+begin
+  if CheckBox3.Checked then begin
+    Timer3.Interval:=5000;
+    Timer3.Enabled:=True;
+  end
+  else
+    Timer3.Enabled:=False;
 end;
 
 procedure TfMain.CheckBox4Click(Sender: TObject);
@@ -635,6 +913,8 @@ begin
   if PingTimeOut > 0 then
     PingTimeoutTrackBar.Position:=PingTimeOut;
   NetMonitoringCheckBox.Checked:=NetMonitoring;
+  if AutoChkUpdates then
+    CheckBox3.Checked:=True;
 
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
   Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
@@ -703,6 +983,7 @@ begin
   else
     NetAddress:='';
   PingTimeOut:=PingTimeoutTrackBar.Position;
+  AutoChkUpdates:=CheckBox3.Checked;
 
   WriteAppConfigs(ConfFile);
 end;
@@ -775,7 +1056,7 @@ begin { TODO : Очищать буфер во время ожидания Remain
               mtWarning,
               5
             ) of
-              ID_OK, ID_YES: ShowMessage('Pushed by: Update');
+              ID_OK, ID_YES: AppUpdateLabelClick(Self);
               ID_IGNORE: { nop } ; //ShowMessage('Pushed by: Basic');
               ID_CANCEL: { nop } ; //ShowMessage('Pushed by: Cancel')
             end;
@@ -862,6 +1143,11 @@ end;
 procedure TfMain.HardResetButtonClick(Sender: TObject);
 begin
   SerialSendCommand(HardResetCmd);
+end;
+
+procedure TfMain.AppUpdateLabelClick(Sender: TObject);
+begin
+  ChkAppUpdatesButtonClick(Self);
 end;
 
 procedure TfMain.PowerOffButtonClick(Sender: TObject);

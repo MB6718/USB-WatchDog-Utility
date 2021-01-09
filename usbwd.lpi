@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="67"/>
+      <BuildNr Value="70"/>
       <StringTable CompanyName="MB6718" FileDescription="USBWatchDog v0.1" InternalName="usbwd" LegalCopyright="© 2020, MB6718" OriginalFilename="usbwd" ProductName="USBWatchDog" ProductVersion="0.1"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -66,18 +66,21 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="3">
+    <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="laz_synapse"/>
+        <PackageName Value="FCL"/>
       </Item1>
       <Item2>
-        <PackageName Value="LazSerialPort"/>
+        <PackageName Value="laz_synapse"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCL"/>
+        <PackageName Value="LazSerialPort"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="usbwd.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -97,6 +100,14 @@
         <Filename Value="Log4Pascal.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="download.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fDownload"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Download"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
