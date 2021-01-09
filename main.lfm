@@ -1088,7 +1088,6 @@ object fMain: TfMain
       Width = 20
       BorderSpacing.Left = 10
       BorderSpacing.Top = 5
-      Enabled = False
       Flat = True
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -1126,6 +1125,7 @@ object fMain: TfMain
         1D05A43F1D00A43F1D00A43F1D3CA43F1DA0A43F1DE5A43F1DFFA43F1DFFA43F
         1DE5A43F1DA0A43F1D3CA43F1D00A43F1D00A43F1D05A43F1D03
       }
+      OnClick = HelpButtonClick
       ShowHint = True
       ParentShowHint = False
     end

@@ -111,6 +111,7 @@ type
     procedure FormWindowStateChange(Sender: TObject);
     procedure HardResetButtonClick(Sender: TObject);
     procedure AppUpdateLabelClick(Sender: TObject);
+    procedure HelpButtonClick(Sender: TObject);
     procedure LazSerial1RxData(Sender: TObject);
     procedure LazSerial1Status(Sender: TObject; Reason: THookSerialReason;
       const Value: string);
@@ -1148,6 +1149,13 @@ end;
 procedure TfMain.AppUpdateLabelClick(Sender: TObject);
 begin
   ChkAppUpdatesButtonClick(Self);
+end;
+
+procedure TfMain.HelpButtonClick(Sender: TObject);
+const
+  HelpURL = 'http://localhost:5000/help';
+begin
+  OpenURL(HelpURL);
 end;
 
 procedure TfMain.PowerOffButtonClick(Sender: TObject);
