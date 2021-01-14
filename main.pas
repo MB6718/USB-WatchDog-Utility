@@ -157,15 +157,6 @@ type
     var FirmwareVersion: Integer;
     var NetHint: THintWindow;
 
-    var ARemainMsgDlg,
-        ARemainAppUpdateMsgDlg: TForm;
-    var aRemainMsgDlgCaption,
-        aRemainBtnCaption,
-        aRemainAppUpdateMsgDlgCaption,
-        aRemainAppUpdateBtnCaption: String;
-    var aRemainTime,
-        aRemainAppUpdateTime: Integer;
-
     procedure SetRegistryAutorunKey(RunState: TRunState);
     procedure ShowNetEditHint();
     function ValidateURL(const URL: String): Boolean;
@@ -178,13 +169,6 @@ type
     procedure SerialSendByte(CommandByte: Integer);
     procedure SerialSendCommand(Command: TSendCommand);
     function HexToVerString(IntVersion: Byte): String;
-    function FindButtonByCaption(const P: TForm; const aCaption: string): TButton;
-
-    function RemainMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType; aTimeOut: Integer): TModalResult;
-    function RemainAppUpdateMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType; aTimeOut: Integer): TModalResult;
-
-    procedure MsgDlgOnTimer(Sender: TObject);
-    procedure AppUpdMsgDlgOnTimer(Sender: TObject);
     procedure StartAppUpdate(const FileName: String);
     function GetAppUpdates(): TUpdateVersion;
     function CompareVersion(const UpdVers, AppVersion: String): Boolean;
@@ -229,7 +213,7 @@ var
 implementation
 
 uses
-  AppConfigs, Download;
+  AppConfigs, Download, CustomMsgDlg;
 
 { TfMain }
 
@@ -441,191 +425,6 @@ begin
     Result:='v' + IntToStr(IntVersion div 10) + '.' + IntToStr(IntVersion mod 10);
 end;
 
-function TfMain.FindButtonByCaption(const P: TForm; const aCaption: string): TButton;
-var
-  i: Integer;
-  Button: TButton;
-begin
-  Result:=nil;
-  if (aCaption = '') or (P = nil) then exit;
-  for i:=0 to P.ControlCount - 1 do begin
-    if P.Controls[i] is TButton then begin
-      Button:=TButton(p.Controls[i]);
-      if (CompareText(Button.Caption, aCaption) = 0) then
-        Exit(Button);
-    end;
-  end;
-end;
-
-function TfMain.RemainMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType; aTimeOut: Integer): TModalResult;
-const
-  BtnMargin = 10;
-var
-  Timer: TTimer;
-  Panel: TPanel;
-  YesButton, CancelButton: TButton;
-  Control: TControl;
-begin
-  ARemainMsgDlg:=CreateMessageDialog(aMsgText, aDlgType, [mbYes]);
-  Panel:=TPanel.Create(ARemainMsgDlg);
-  YesButton:=TButton.Create(Panel);
-  CancelButton:=TButton.Create(Panel);
-  Timer:=TTimer.Create(ARemainMsgDlg);
-  Timer.Interval:=1000;
-  Timer.Enabled:=False;
-  Timer.OnTimer:=@MsgDlgOnTimer;
-  aRemainTime:=aTimeOut;
-  aRemainMsgDlgCaption:=aMsgCaption + 'Remain %d sec.';
-  aRemainBtnCaption:='Basic (%d)';
-  with ARemainMsgDlg do begin
-    try
-      Caption:=aRemainMsgDlgCaption;
-      Width:=400;
-      ParentColor:=False;
-      Color:=clWindow;
-      //Position:=poOwnerFormCenter;
-      Control:=FindButtonByCaption(ARemainMsgDlg, '&Yes');
-      if ((Control <> nil) and (Control is TBitBtn)) then
-        (Control as TBitBtn).Visible:=False;
-      with Panel do begin
-        Parent:=ARemainMsgDlg;
-        ParentColor:=False;
-        Color:=clDefault;
-        Caption:=' ';
-        Align:=alBottom;
-        Height:=45;
-        BevelInner:=bvLowered;
-        BevelOuter:=bvNone;
-        Name:='Panel';
-      end;
-      with YesButton do begin
-        Parent:=Panel;
-        Width:=100;
-        Left:=CancelButton.Left + CancelButton.Width + Width + BtnMargin;
-        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
-        Caption:=aRemainBtnCaption;
-        ModalResult:=mrIgnore;
-        Font.Style:=[fsBold];
-        Name:='YesButton';
-      end;
-      with CancelButton do begin
-        Parent:=Panel;
-        Width:=100;
-        Left:=ARemainMsgDlg.Width - Width - BtnMargin;
-        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
-        Caption:='Update';
-        ModalResult:=mrYes;
-        Name:='CancelButton';
-        Enabled:=False;
-      end;
-      Timer.Enabled:=True;
-      MsgDlgOnTimer(Self);
-      Result:=ShowModal;
-    finally
-      Timer.Free;
-      Free;
-    end;
-  end;
-end;
-
-function TfMain.RemainAppUpdateMsgDlg(const aMsgCaption, aMsgText: String; aDlgType: TMsgDlgType; aTimeOut: Integer): TModalResult;
-const
-  BtnMargin = 10;
-var
-  Timer: TTimer;
-  Panel: TPanel;
-  YesButton, RetryButton: TButton;
-  Control: TControl;
-begin
-  ARemainAppUpdateMsgDlg:=CreateMessageDialog(aMsgText + LineEnding, aDlgType, [mbYes]);
-  Panel:=TPanel.Create(ARemainAppUpdateMsgDlg);
-  YesButton:=TButton.Create(Panel);
-  RetryButton:=TButton.Create(Panel);
-  Timer:=TTimer.Create(ARemainAppUpdateMsgDlg);
-  Timer.Interval:=1000;
-  Timer.Enabled:=False;
-  Timer.OnTimer:=@AppUpdMsgDlgOnTimer;
-  aRemainAppUpdateTime:=aTimeOut;
-  aRemainAppUpdateMsgDlgCaption:=aMsgCaption + 'Remain %d sec.';
-  aRemainAppUpdateBtnCaption:='Remind me later (%d)';
-  with ARemainAppUpdateMsgDlg do begin
-    try
-      Caption:=aRemainAppUpdateMsgDlgCaption;
-      Width:=400;
-      ParentColor:=False;
-      Color:=clWindow;
-      //Position:=poOwnerFormCenter;
-      Control:=FindButtonByCaption(ARemainAppUpdateMsgDlg, '&Yes');
-      if ((Control <> nil) and (Control is TBitBtn)) then
-        (Control as TBitBtn).Visible:=False;
-      with Panel do begin
-        Parent:=ARemainAppUpdateMsgDlg;
-        ParentColor:=False;
-        Color:=clDefault;
-        Caption:=' ';
-        Align:=alBottom;
-        Height:=45;
-        BevelInner:=bvLowered;
-        BevelOuter:=bvNone;
-        Name:='Panel';
-      end;
-      with RetryButton do begin
-        Parent:=Panel;
-        Width:=130;
-        Left:=ARemainAppUpdateMsgDlg.Width - Width - BtnMargin;
-        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
-        Caption:=aRemainAppUpdateBtnCaption; ;
-        ModalResult:=mrRetry;
-        Font.Style:=[fsBold];
-        Name:='RetryButton';
-      end;
-      with YesButton do begin
-        Parent:=Panel;
-        Width:=80;
-        Left:=RetryButton.Left - Width - BtnMargin;
-        Top:=(Panel.Height div 2) + (Height div 2) - Height + 1;
-        Caption:='Update';
-        ModalResult:=mrYes;
-        Name:='YesButton';
-      end;
-      Timer.Enabled:=True;
-      AppUpdMsgDlgOnTimer(Self);
-      Result:=ShowModal;
-    finally
-      Timer.Free;
-      Free;
-    end;
-  end;
-end;
-
-procedure TfMain.MsgDlgOnTimer(Sender: TObject);
-var
-  Button: TButton;
-begin
-  with ARemainMsgDlg do begin
-    Caption:=Format(aRemainMsgDlgCaption, [aRemainTime]);
-    Button:=TButton((TPanel(FindComponent('Panel'))).FindComponent('YesButton'));
-    Button.Caption:=Format(aRemainBtnCaption, [aRemainTime]);
-  end;
-  if (aRemainTime = 0) then
-    ARemainMsgDlg.ModalResult:=ID_IGNORE;
-  Dec(aRemainTime);
-end;
-
-procedure TfMain.AppUpdMsgDlgOnTimer(Sender: TObject);
-var
-  Button: TButton;
-begin
-  with ARemainAppUpdateMsgDlg do begin
-    Caption:=Format(aRemainAppUpdateMsgDlgCaption, [aRemainAppUpdateTime]);
-    Button:=TButton((TPanel(FindComponent('Panel'))).FindComponent('RetryButton'));
-    Button.Caption:=Format(aRemainAppUpdateBtnCaption, [aRemainAppUpdateTime]);
-  end;
-  if (aRemainAppUpdateTime = 0) then
-    ARemainAppUpdateMsgDlg.ModalResult:=ID_RETRY;
-  Dec(aRemainAppUpdateTime);
-end;
-
 procedure TfMain.StartAppUpdate(const FileName: String);
 const
   DownloadURL = 'http://localhost:5000/downloads/';
@@ -766,6 +565,7 @@ end;
 procedure TfMain.ChkUpdateTimerTimer(Sender: TObject);
 var
   UpdateVersion: TUpdateVersion;
+  CustomMsgDlg: TCustomMsgDlg;
 begin
   ChkUpdateTimer.Enabled:=False;
   UpdateVersion:=GetAppUpdates();
@@ -773,13 +573,24 @@ begin
     if CompareVersion(version, Copy(AppVersion, 2, 4)) then begin
       AppUpdateLabel.Visible:=True;
       AppUpdateLabel.Caption:='  App update available, version: v' + version + '  ';
-      if RemainAppUpdateMsgDlg(
-        'App Update',
+      CustomMsgDlg:=TCustomMsgDlg.Create(
+        'App Update. ',
         'Update available. Update app now?',
         mtConfirmation,
+        [
+          CustomMsgDlgButton(mbNo, 'Ask later', TimeMark),
+          CustomMsgDlgButton(mbYes, 'Update now')
+        ],
+        Self,
+        mrNo,
         10
-      ) = mrYes then
-        StartAppUpdate(filename);
+      );
+      try
+        if CustomMsgDlg.ShowDialog = mrYes then
+          StartAppUpdate(filename);
+      finally
+        CustomMsgDlg.Free;
+      end;
     end;
   ChkUpdateTimer.Interval:=ChkUpdateInterval;
   ChkUpdateTimer.Enabled:=True;
@@ -1089,6 +900,7 @@ end;
 procedure TfMain.LazSerial1RxData(Sender: TObject);
 var
   Response: Integer;
+  CustomMsgDlg: TCustomMsgDlg;
 begin { TODO : Очищать буфер во время ожидания RemainMsgDlg }
   Response:=LazSerial1.SynSer.RecvByte(0);
   case Response of
@@ -1125,19 +937,30 @@ begin { TODO : Очищать буфер во время ожидания Remain
           if not BasicAcceptFlag then begin
             Logger.Info('Firmware version incorrect!');
             DeviceTimer.Enabled:=False;
-            case RemainMsgDlg(
-              'App warning!',
+            CustomMsgDlg:=TCustomMsgDlg.Create(
+              'App warning! ',
               'Current device version is ' + HexToVerString(FirmwareVersion) + LineEnding +
               'The application requires a device version ' + HexToVerString(MinFWVers) +
               ' or higher.' + LineEnding + LineEnding +
               'Will only basic functions be used (automatically)' + LineEnding +
               'or check app update now (recommended)?' + LineEnding,
               mtWarning,
+              [
+                CustomMsgDlgButton(mbYes, '&Yes'),
+                CustomMsgDlgButton(mbIgnore, 'Basic', TimeMark)
+              ],
+              Self,
+              mrYes,
               5
-            ) of
-              mrOK, mrYes: AppUpdateLabelClick(Self);
-              mrIgnore: { nop } ; //ShowMessage('Pushed by: Basic');
-              mrCancel: { nop } ; //ShowMessage('Pushed by: Cancel')
+            );
+            try
+              case CustomMsgDlg.ShowDialog of
+                mrOK, mrYes: AppUpdateLabelClick(Self);
+                mrIgnore: { nop } ; //ShowMessage('Pushed by: Basic');
+                mrCancel: { nop } ; //ShowMessage('Pushed by: Cancel')
+              end;
+            finally
+              CustomMsgDlg.Free;
             end;
             BasicAcceptFlag:=True;
             DeviceTimer.Enabled:=True;
