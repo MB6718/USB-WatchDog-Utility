@@ -27,11 +27,11 @@ type
     toFileName: String;
     UpdateAllowed: Boolean;
     function Download(aFrom, aTo: String): Boolean;
-    procedure DoOnWriteStream(Sender: TObject; APosition: LongInt);
+    procedure DoOnWriteStream(Sender: TObject; aPosition: LongInt);
     function FormatSize(Size: Int64): String;
     function FormatPercentage(CurrentValue, MaxValue: LongInt): String;
     function GetContentLength(Head: TStringList): LongInt;
-    procedure ProgressBar1StepPosition(APosition: LongInt);
+    procedure ProgressBar1StepPosition(aPosition: LongInt);
   public
     procedure SetDownload(aFrom, aTo: String);
   end;
@@ -47,7 +47,7 @@ type
 
   { TDownloadStream }
 
-  TOnWriteStream = procedure(Sender: TObject; APosition: LongInt) of object;
+  TOnWriteStream = procedure(Sender: TObject; aPosition: LongInt) of object;
   TDownloadStream = class(TStream)
   private
     FOnWriteStream: TOnWriteStream;
@@ -157,7 +157,7 @@ end;
 
 function TfDownload.FormatPercentage(CurrentValue, MaxValue: LongInt): String;
 begin
-  Result:=FloatToStrF((CurrentValue / MaxValue * 100), ffFixed, 3, 2) + ' %';
+  Result:=FormatFloat('#,##0.0 %', CurrentValue / MaxValue * 100);
 end;
 
 function TfDownload.GetContentLength(Head: TStringList): LongInt;
@@ -182,17 +182,18 @@ begin
   end
 end;
 
-procedure TfDownload.ProgressBar1StepPosition(APosition: LongInt);
+procedure TfDownload.ProgressBar1StepPosition(aPosition: LongInt);
 begin
-  if (APosition < ProgressBar1.Max) then begin
-    ProgressBar1.Position:=APosition + 1;
-    ProgressBar1.Position:=APosition;
-  end
-  else begin
-    ProgressBar1.Max:=APosition + 1;
-    ProgressBar1.Position:=APosition + 1;
-    ProgressBar1.Max:=APosition;
-  end;
+  with ProgressBar1 do
+    if (aPosition < Max) then begin
+      Position:=aPosition + 1;
+      Position:=aPosition;
+    end
+    else begin
+      Max:=aPosition + 1;
+      Position:=aPosition + 1;
+      Max:=aPosition;
+    end;
 end;
 
 procedure TfDownload.SetDownload(aFrom, aTo: String);
@@ -202,28 +203,20 @@ begin
   UpdateAllowed:=True;
 end;
 
-procedure TfDownload.DoOnWriteStream(Sender: TObject; APosition: LongInt);
+procedure TfDownload.DoOnWriteStream(Sender: TObject; aPosition: LongInt);
 var
   MaxValue: Integer;
 begin
   MaxValue:=ProgressBar1.Max;
-  ProgressLabel.Caption:=('Downloaded: ' + FormatSize(APosition) + ' ( ' +
-    FormatPercentage(APosition, MaxValue) + ' )');
-  ProgressBar1StepPosition(APosition);
+  ProgressLabel.Caption:=('Downloaded: ' + FormatSize(aPosition) + ' ( ' +
+    FormatPercentage(aPosition, MaxValue) + ' )');
+  ProgressBar1StepPosition(aPosition);
   Application.ProcessMessages;
 end;
 
 procedure TfDownload.FormCreate(Sender: TObject);
 begin
   FHTTPClient:=TFPHTTPClient.Create(nil);
-end;
-
-procedure TfDownload.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  if UpdateAllowed then
-    CloseAction:=caNone
-  else
-    CloseAction:=caFree;
 end;
 
 procedure TfDownload.FormDestroy(Sender: TObject);
@@ -234,6 +227,14 @@ end;
 procedure TfDownload.FormShow(Sender: TObject);
 begin
   Timer1.Enabled:=True;
+end;
+
+procedure TfDownload.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  if UpdateAllowed then
+    CloseAction:=caNone
+  else
+    CloseAction:=caFree;
 end;
 
 procedure TfDownload.Timer1Timer(Sender: TObject);

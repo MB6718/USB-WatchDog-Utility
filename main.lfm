@@ -22,9 +22,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = AppTabSheet
+    ActivePage = DeviceTabSheet
     Align = alClient
-    TabIndex = 2
+    TabIndex = 1
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -456,7 +456,7 @@ object fMain: TfMain
           BorderSpacing.Top = 8
           Caption = '10s'
           ParentColor = False
-          OnClick = s10LabelClick
+          OnClick = TimeLabelCLick
           OnMouseLeave = TimeLabelMouseLeave
           OnMouseMove = TimeLabelMouseMove
         end
@@ -471,7 +471,7 @@ object fMain: TfMain
           BorderSpacing.Left = 340
           Caption = '20m'
           ParentColor = False
-          OnClick = m20LabelClick
+          OnClick = TimeLabelCLick
           OnMouseLeave = TimeLabelMouseLeave
           OnMouseMove = TimeLabelMouseMove
         end
@@ -486,7 +486,7 @@ object fMain: TfMain
           BorderSpacing.Left = 58
           Caption = '3m'
           ParentColor = False
-          OnClick = m3LabelClick
+          OnClick = TimeLabelCLick
           OnMouseLeave = TimeLabelMouseLeave
           OnMouseMove = TimeLabelMouseMove
         end
@@ -501,7 +501,7 @@ object fMain: TfMain
           BorderSpacing.Left = 92
           Caption = '5m'
           ParentColor = False
-          OnClick = m5LabelClick
+          OnClick = TimeLabelCLick
           OnMouseLeave = TimeLabelMouseLeave
           OnMouseMove = TimeLabelMouseMove
         end
@@ -516,7 +516,7 @@ object fMain: TfMain
           BorderSpacing.Left = 172
           Caption = '10m'
           ParentColor = False
-          OnClick = m10LabelClick
+          OnClick = TimeLabelCLick
           OnMouseLeave = TimeLabelMouseLeave
           OnMouseMove = TimeLabelMouseMove
         end
@@ -531,7 +531,7 @@ object fMain: TfMain
           BorderSpacing.Left = 256
           Caption = '15m'
           ParentColor = False
-          OnClick = m15LabelClick
+          OnClick = TimeLabelCLick
           OnMouseLeave = TimeLabelMouseLeave
           OnMouseMove = TimeLabelMouseMove
         end
@@ -741,7 +741,7 @@ object fMain: TfMain
         OnClick = CleanLogButtonClick
         ParentBidiMode = False
       end
-      object Shape2: TShape
+      object SplitterShape: TShape
         AnchorSideLeft.Control = AppTabSheet
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Control = CheckBox1
@@ -752,7 +752,7 @@ object fMain: TfMain
         Pen.Color = clGray
       end
       object CheckBox7: TCheckBox
-        AnchorSideLeft.Control = Shape2
+        AnchorSideLeft.Control = SplitterShape
         AnchorSideTop.Control = AppTabSheet
         Left = 256
         Height = 19
@@ -1130,18 +1130,23 @@ object fMain: TfMain
       ParentShowHint = False
     end
     object AppUpdateLabel: TLabel
+      AnchorSideLeft.Control = HelpButton
+      AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Panel1
       AnchorSideTop.Side = asrCenter
       Cursor = crHandPoint
-      Left = 48
+      Left = 45
       Height = 15
       Top = 9
-      Width = 168
-      Caption = 'App update available, version: '
-      Font.Color = clGreen
+      Width = 180
+      BorderSpacing.Left = 15
+      Caption = '  App update available, version:   '
+      Color = clGreen
+      Font.Color = clForm
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
+      Transparent = False
       Visible = False
       OnClick = AppUpdateLabelClick
     end
@@ -1167,10 +1172,10 @@ object fMain: TfMain
     left = 312
     top = 16
   end
-  object Timer2: TTimer
+  object DeviceTimer: TTimer
     Enabled = False
     Interval = 2000
-    OnTimer = Timer2Timer
+    OnTimer = DeviceTimerTimer
     left = 408
     top = 16
   end
@@ -1302,10 +1307,10 @@ object fMain: TfMain
       OnClick = TrayMenuItemExitClick
     end
   end
-  object Timer3: TTimer
+  object ChkUpdateTimer: TTimer
     Enabled = False
     Interval = 5000
-    OnTimer = Timer3Timer
+    OnTimer = ChkUpdateTimerTimer
     left = 376
     top = 16
   end

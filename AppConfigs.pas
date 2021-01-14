@@ -36,12 +36,12 @@ var
   AutoConnect: boolean;
 
 { Описание прототипов процедур и функций }
-procedure ReadAppConfigs(ConfigFile: string);
-procedure WriteAppConfigs(ConfigFile: string);
+procedure ReadAppConfigs(const ConfigFile: string);
+procedure WriteAppConfigs(const ConfigFile: string);
 
 implementation
 
-procedure ReadAppConfigs(ConfigFile: string);
+procedure ReadAppConfigs(const ConfigFile: string);
 begin
   INI:=TINIFile.Create(ExtractFilePath(ParamStr(0)) + ConfigFile);
   try
@@ -71,7 +71,7 @@ begin
   end;
 end;
 
-procedure WriteAppConfigs(ConfigFile: string);
+procedure WriteAppConfigs(const ConfigFile: string);
 begin
   INI:=TINIFile.Create(ExtractFilePath(ParamStr(0)) + ConfigFile);
   try
