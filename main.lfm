@@ -22,9 +22,9 @@ object fMain: TfMain
     Height = 293
     Top = 0
     Width = 480
-    ActivePage = MainTabSheet
+    ActivePage = AboutTabSheet
     Align = alClient
-    TabIndex = 0
+    TabIndex = 3
     TabOrder = 0
     object MainTabSheet: TTabSheet
       Caption = 'Main'
@@ -356,6 +356,7 @@ object fMain: TfMain
           Width = 126
           BorderSpacing.Left = 14
           Caption = 'Power OFF [F3]'
+          Enabled = False
           OnClick = PowerOffButtonClick
           TabOrder = 2
         end
@@ -987,7 +988,7 @@ object fMain: TfMain
         Visible = False
       end
       object BTCWalletLabel: TLabel
-        Tag = 2
+        Tag = 3
         AnchorSideLeft.Control = AboutTabSheet
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Control = ETHWalletLabel
@@ -1313,5 +1314,27 @@ object fMain: TfMain
     OnTimer = ChkUpdateTimerTimer
     left = 376
     top = 16
+  end
+  object ActionList1: TActionList
+    left = 184
+    top = 16
+    object SoftResetAction: TAction
+      Caption = 'Soft Reset [F1]'
+      Enabled = False
+      OnExecute = SoftResetButtonClick
+      ShortCut = 112
+    end
+    object HardResetAction: TAction
+      Caption = 'Hard Reset [F2]'
+      Enabled = False
+      OnExecute = HardResetButtonClick
+      ShortCut = 113
+    end
+    object PowerOffAction: TAction
+      Caption = 'Power OFF [F3]'
+      Enabled = False
+      OnExecute = PowerOffButtonClick
+      ShortCut = 114
+    end
   end
 end

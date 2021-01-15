@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  RegExpr, windows, registry, pingsend, LCLIntf, LCLType, Log4Pascal, Fpjson,
-  jsonparser, fphttpclient, Types;
+  RegExpr, windows, registry, pingsend, LCLIntf, LCLType, ActnList, Log4Pascal,
+  Fpjson, jsonparser, fphttpclient, Types;
 
 type
 
@@ -28,6 +28,10 @@ type
   { TfMain }
 
   TfMain = class(TForm)
+    SoftResetAction: TAction;
+    HardResetAction: TAction;
+    PowerOffAction: TAction;
+    ActionList1: TActionList;
     ButtonsGroupBox: TGroupBox;
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
@@ -177,11 +181,11 @@ type
     const AppName = 'USB WatchDog';
     const AppVersion = 'v0.1';
     const ManufacturerName = 'MB6718';
-    const XMRWalletAddress = 'xmr_address';
-    const ETHWalletAddress = 'eth_address';
-    const BTCWalletAddress = 'btc_address';
+    const XMRWalletAddress = '42u7Gj1tUgRBo2V6SqcvyBdrF1mTN1rU62LcHFJdvYYr4vtwCxck5HdeMwfPWzLj7w2i6PsX2h64gfP5b84vWLceLdZyimg';
+    const ETHWalletAddress = '0x044e4ba3369716158a67f1138cfc84984fb9fd2d';
+    const BTCWalletAddress = '3CYsMhTT1qVvRXgJ6gc7kk3NiRnFxjCEJr';
     const SupportEmailAddress = 'support@usbwatchdog.ru';
-    const HelpURL = 'http://localhost:5000/help';
+    const HelpURL = 'http://usbwatchdog.ru/help';
 
     { Config file }
     {$IFDEF UNIX} // -- UNIX --
@@ -341,6 +345,8 @@ begin
   IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
 
   ButtonsGroupBox.Enabled:=False;
+  (ActionList1.ActionByName('SoftResetAction') as TAction).Enabled:=False;
+  (ActionList1.ActionByName('HardResetAction') as TAction).Enabled:=False;
   WaitingTimeGroupBox.Enabled:=False;
   ModesRadioGroup.Enabled:=False;
   PowerModeRadioGroup.Enabled:=False;
@@ -758,6 +764,10 @@ begin
   fMain.Caption:=AppName + ' ' + AppVersion;
   Application.Title:=AppName + ' ' + AppVersion;
   SupportEmailLabel.Caption:=SupportEmailAddress;
+  BTCWalletLabel.Caption:=BTCWalletAddress;
+  ETHWalletLabel.Caption:=ETHWalletAddress;
+  XMRWalletLabel.Caption:=Copy(XMRWalletAddress, 0, 32) + ' ... ' +
+    Copy(XMRWalletAddress, Length(XMRWalletAddress) - 32, Length(XMRWalletAddress));
 
   TrayIcon1.Icon:=Application.Icon;
   TrayIcon1.Hint:=AppName + AppVersion;
@@ -910,6 +920,10 @@ begin { TODO : Очищать буфер во время ожидания Remain
       Logger.Info('Send signal OK');
       IndicatorShape.Brush.Color:=RGBToColor(102, 204, 0); // green
       ButtonsGroupBox.Enabled:=True;
+
+      (ActionList1.ActionByName('SoftResetAction') as TAction).Enabled:=True;
+      (ActionList1.ActionByName('HardResetAction') as TAction).Enabled:=True;
+
       WaitingTimeGroupBox.Enabled:=True;
       DeviceStatusLabel.Caption:=DsLabel + 'connected';
 
@@ -1007,10 +1021,12 @@ procedure TfMain.PowerModeRadioGroupClick(Sender: TObject);
 begin
   if PowerModeRadioGroup.ItemIndex=1 then begin
     PowerOffButton.Enabled:=True;
+    (ActionList1.ActionByName('PowerOffAction') as TAction).Enabled:=True;
     ModesRadioGroup.Controls[2].Enabled:=True;
   end
   else begin
     PowerOffButton.Enabled:=False;
+    (ActionList1.ActionByName('PowerOffAction') as TAction).Enabled:=False;
     ModesRadioGroup.Controls[2].Enabled:=False;
   end;
 end;
