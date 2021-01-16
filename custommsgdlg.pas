@@ -81,7 +81,7 @@ begin
   FDefModRes:=ADefModRes;
   FParent:=AParent;
 
-  FMsgDlgForm:=CreateMessageDialog(AMsg + LineEnding + LineEnding, ADlgType, [mbYes]);
+  FMsgDlgForm:=CreateMessageDialog(AMsg + LineEnding, ADlgType, [mbYes]);
   with FMsgDlgForm do begin
     Color:=clWindow;
     for i:=0 to ControlCount - 1 do
@@ -94,8 +94,8 @@ begin
       Width:=1 * (ButtonWidth + ButtonsMargin * 2);
     if AMsg <> '' then begin
       StringWidth:=GetTextWidth(AMsg, Font, Handle);
-      if (StringWidth + 65) > Width then
-        Width:=StringWidth + 65;
+      if (StringWidth + ButtonWidth) > Width then
+        Width:=StringWidth + ButtonWidth;
     end;
   end;
 
@@ -191,16 +191,36 @@ begin
   end;
 end;
 
-function TCustomMsgDlg.GetTextWidth(aString: string; aFont: TFont; HWND: THandle): Integer;
+function TCustomMsgDlg.GetTextWidth(aString: String; aFont: TFont; HWND: THandle): Integer;
 var
   Canvas: TCanvas;
+  WordCounter, TempCounter: Integer;
+  SubString: String;
 begin
+  WordCounter:=0;
+  SubString:='';
+  while Length(aString) > 0 do begin
+    TempCounter:=Pos(LineEnding, aString);
+    if TempCounter > 0 then begin
+      if WordCounter < TempCounter then begin
+        WordCounter:=TempCounter - 1;
+        SubString:=Copy(aString, 0, TempCounter - 1);
+      end;
+      aString:=Copy(aString, TempCounter + 2, Length(aString));
+    end
+    else begin
+      if (Length(aString) > 0) and (WordCounter < Length(aString)) then
+        SubString:=Copy(aString, 0, Length(aString));
+      aString:='';
+    end;
+  end;
+
   Canvas:=TCanvas.Create;
   with Canvas do
     try
       Handle:=GetWindowDC(HWND);
       Font:=aFont;
-      Result:=TextWidth(aString);
+      Result:=TextWidth(SubString);
     finally
       ReleaseDC(HWND, Handle);
       FreeAndNil(Canvas);

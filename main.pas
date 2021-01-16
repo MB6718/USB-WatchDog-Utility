@@ -957,7 +957,7 @@ begin { TODO : Очищать буфер во время ожидания Remain
               'The application requires a device version ' + HexToVerString(MinFWVers) +
               ' or higher.' + LineEnding + LineEnding +
               'Will only basic functions be used (automatically)' + LineEnding +
-              'or check app update now (recommended)?' + LineEnding,
+              'or check app update now (recommended)?',
               mtWarning,
               [
                 CustomMsgDlgButton(mbYes, '&Yes'),
