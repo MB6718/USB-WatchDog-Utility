@@ -735,7 +735,8 @@ begin
     PowerModeRadioGroup.ItemIndex:=0;
     ModesRadioGroup.ItemIndex:=1;
     PingTimeoutTrackBar.Position:=1000;
-    NetAddressEdit.Text:=PingAddressBlank;
+    NetAddressEdit.Clear;
+    NetAddressEditExit(Self);
     NetMonitoringCheckBox.Checked:=False;
   end;
 end;
@@ -964,7 +965,7 @@ begin { TODO : Очищать буфер во время ожидания Remain
                 CustomMsgDlgButton(mbIgnore, 'Basic', TimeMark)
               ],
               Self,
-              mrYes,
+              mrIgnore,
               5
             );
             try

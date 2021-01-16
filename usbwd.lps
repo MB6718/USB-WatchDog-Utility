@@ -19,8 +19,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="934"/>
-        <CursorPos X="19" Y="956"/>
+        <TopLine Value="945"/>
+        <CursorPos X="39" Y="966"/>
         <UsageCount Value="196"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -189,87 +189,87 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="main.pas"/>
-        <Caret Line="232" Column="37" TopLine="219"/>
+        <Caret Line="569" Column="31" TopLine="555"/>
       </Position1>
       <Position2>
         <Filename Value="main.pas"/>
-        <Caret Line="936" Column="31" TopLine="932"/>
+        <Caret Line="764" Column="57" TopLine="737"/>
       </Position2>
       <Position3>
         <Filename Value="main.pas"/>
-        <Caret Line="569" Column="31" TopLine="555"/>
+        <Caret Line="761" Column="19" TopLine="738"/>
       </Position3>
       <Position4>
         <Filename Value="main.pas"/>
-        <Caret Line="764" Column="57" TopLine="737"/>
+        <Caret Line="182" Column="11" TopLine="160"/>
       </Position4>
       <Position5>
         <Filename Value="main.pas"/>
-        <Caret Line="761" Column="19" TopLine="738"/>
+        <Caret Line="763" Column="25" TopLine="151"/>
       </Position5>
       <Position6>
         <Filename Value="main.pas"/>
-        <Caret Line="182" Column="11" TopLine="160"/>
+        <Caret Line="1093" Column="18" TopLine="1068"/>
       </Position6>
       <Position7>
         <Filename Value="main.pas"/>
-        <Caret Line="763" Column="25" TopLine="151"/>
+        <Caret Line="186" Column="51" TopLine="161"/>
       </Position7>
       <Position8>
         <Filename Value="main.pas"/>
-        <Caret Line="1093" Column="18" TopLine="1068"/>
+        <Caret Line="187" Column="51" TopLine="162"/>
       </Position8>
       <Position9>
         <Filename Value="main.pas"/>
-        <Caret Line="186" Column="51" TopLine="161"/>
+        <Caret Line="188" Column="51" TopLine="163"/>
       </Position9>
       <Position10>
         <Filename Value="main.pas"/>
-        <Caret Line="187" Column="51" TopLine="162"/>
+        <Caret Line="189" Column="51" TopLine="164"/>
       </Position10>
       <Position11>
         <Filename Value="main.pas"/>
-        <Caret Line="188" Column="51" TopLine="163"/>
+        <Caret Line="190" Column="51" TopLine="165"/>
       </Position11>
       <Position12>
         <Filename Value="main.pas"/>
-        <Caret Line="189" Column="51" TopLine="164"/>
+        <Caret Line="1041" Column="3" TopLine="1039"/>
       </Position12>
       <Position13>
         <Filename Value="main.pas"/>
-        <Caret Line="190" Column="51" TopLine="165"/>
+        <Caret Line="535" Column="25" TopLine="526"/>
       </Position13>
       <Position14>
         <Filename Value="main.pas"/>
-        <Caret Line="1041" Column="3" TopLine="1039"/>
+        <Caret Line="1033" Column="33" TopLine="997"/>
       </Position14>
       <Position15>
         <Filename Value="main.pas"/>
-        <Caret Line="535" Column="25" TopLine="526"/>
+        <Caret Line="89" Column="20" TopLine="67"/>
       </Position15>
       <Position16>
         <Filename Value="main.pas"/>
-        <Caret Line="1033" Column="33" TopLine="997"/>
+        <Caret Line="133" Column="30" TopLine="95"/>
       </Position16>
       <Position17>
         <Filename Value="main.pas"/>
-        <Caret Line="89" Column="20" TopLine="67"/>
+        <Caret Line="130" Column="15" TopLine="108"/>
       </Position17>
       <Position18>
         <Filename Value="main.pas"/>
-        <Caret Line="133" Column="30" TopLine="95"/>
+        <Caret Line="926" Column="72" TopLine="903"/>
       </Position18>
       <Position19>
         <Filename Value="main.pas"/>
-        <Caret Line="130" Column="15" TopLine="108"/>
+        <Caret Line="991" Column="50" TopLine="961"/>
       </Position19>
       <Position20>
         <Filename Value="main.pas"/>
-        <Caret Line="926" Column="72" TopLine="903"/>
+        <Caret Line="130" Column="15" TopLine="107"/>
       </Position20>
       <Position21>
         <Filename Value="main.pas"/>
-        <Caret Line="991" Column="50" TopLine="961"/>
+        <Caret Line="994" Column="14" TopLine="961"/>
       </Position21>
       <Position22>
         <Filename Value="main.pas"/>
@@ -277,35 +277,35 @@
       </Position22>
       <Position23>
         <Filename Value="main.pas"/>
-        <Caret Line="994" Column="14" TopLine="961"/>
+        <Caret Line="919" Column="36" TopLine="890"/>
       </Position23>
       <Position24>
         <Filename Value="main.pas"/>
-        <Caret Line="130" Column="15" TopLine="107"/>
+        <Caret Line="1066" Column="3" TopLine="1064"/>
       </Position24>
       <Position25>
         <Filename Value="main.pas"/>
-        <Caret Line="919" Column="36" TopLine="890"/>
+        <Caret Line="170" Column="15" TopLine="148"/>
       </Position25>
       <Position26>
-        <Filename Value="main.pas"/>
-        <Caret Line="1066" Column="3" TopLine="1064"/>
-      </Position26>
-      <Position27>
-        <Filename Value="main.pas"/>
-        <Caret Line="170" Column="15" TopLine="148"/>
-      </Position27>
-      <Position28>
         <Filename Value="custommsgdlg.pas"/>
         <Caret Line="201" Column="7" TopLine="167"/>
-      </Position28>
-      <Position29>
+      </Position26>
+      <Position27>
         <Filename Value="custommsgdlg.pas"/>
         <Caret Line="210" Column="23" TopLine="177"/>
+      </Position27>
+      <Position28>
+        <Filename Value="main.pas"/>
+        <Caret Line="956" Column="19" TopLine="934"/>
+      </Position28>
+      <Position29>
+        <Filename Value="main.pas"/>
+        <Caret Line="739" Column="5" TopLine="720"/>
       </Position29>
       <Position30>
         <Filename Value="main.pas"/>
-        <Caret Line="956" Column="17" TopLine="935"/>
+        <Caret Line="1128" Column="36" TopLine="1128"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
