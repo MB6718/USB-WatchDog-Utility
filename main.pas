@@ -950,7 +950,7 @@ begin { TODO : Очищать буфер во время ожидания Remain
         if FirmwareVersion < MinFWVers then begin
           BasicFunctionFlag:=False;
           if not BasicAcceptFlag then begin
-            Logger.Info('Firmware version incorrect!');
+            Logger.Warning('Outdated firmware version! Device is put into a basic operation mode');
             DeviceTimer.Enabled:=False;
             CustomMsgDlg:=TCustomMsgDlg.Create(
               'App warning! ',
@@ -981,8 +981,10 @@ begin { TODO : Очищать буфер во время ожидания Remain
             DeviceTimer.Enabled:=True;
           end;
         end
-        else
+        else begin
+          Logger.Info('Device in extended mode');
           BasicFunctionFlag:=True;
+        end;
       end
       else begin
         FirmwareVersionLabel.Caption:=DfwLabel + ManufacturerName;
@@ -1067,17 +1069,17 @@ end;
 procedure TfMain.StartStopButtonClick(Sender: TObject);
 begin
   if LazSerial1.Active then begin
+    Logger.Info('Close ' + PortSelectorComboBox.Text + ' port and session');
     SerialClose();
     DeviceTimer.Enabled:=False;
     DeactivateInterface();
-    Logger.Info('Close ' + PortSelectorComboBox.Text + ' port and session');
   end
   else begin
+    Logger.Info('Trying to open ' + PortSelectorComboBox.Text + ' port and session');
     if SerialOpen(PortSelectorComboBox.Text) then begin
       ActivateInterface();
       SerialSendByte(cmdHello);
       DeviceTimer.Enabled:=True;
-      Logger.Info('Open ' + PortSelectorComboBox.Text + ' port and session');
     end;
   end;
 end;
