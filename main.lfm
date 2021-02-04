@@ -1,0 +1,1340 @@
+object fMain: TfMain
+  Left = 736
+  Height = 325
+  Top = 444
+  Width = 480
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'USB WatchDog v0.1'
+  ClientHeight = 325
+  ClientWidth = 480
+  Constraints.MaxWidth = 480
+  Constraints.MinWidth = 480
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  OnWindowStateChange = FormWindowStateChange
+  Position = poScreenCenter
+  LCLVersion = '1.8.4.0'
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 293
+    Top = 0
+    Width = 480
+    ActivePage = AppTabSheet
+    Align = alClient
+    TabIndex = 2
+    TabOrder = 0
+    object MainTabSheet: TTabSheet
+      Caption = 'Main'
+      ClientHeight = 265
+      ClientWidth = 472
+      object ConnectionGroupBox: TGroupBox
+        AnchorSideLeft.Control = MainTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = MainTabSheet
+        Left = 16
+        Height = 74
+        Top = 8
+        Width = 440
+        BorderSpacing.Top = 8
+        ClientHeight = 54
+        ClientWidth = 436
+        Constraints.MinHeight = 74
+        Constraints.MinWidth = 440
+        TabOrder = 0
+        object PortSelectorComboBox: TComboBox
+          AnchorSideLeft.Control = IndicatorShape
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = ConnectionGroupBox
+          AnchorSideRight.Control = ReScanButton
+          Left = 57
+          Height = 23
+          Top = 3
+          Width = 232
+          Anchors = [akTop, akLeft, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 3
+          BorderSpacing.Right = 10
+          ItemHeight = 15
+          Sorted = True
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object IndicatorShape: TShape
+          AnchorSideLeft.Control = ConnectionGroupBox
+          AnchorSideTop.Control = ConnectionGroupBox
+          Left = 15
+          Height = 26
+          Top = 2
+          Width = 32
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 2
+          Brush.Color = clSilver
+          Pen.Color = clGray
+          Shape = stRoundRect
+        end
+        object StartStopButton: TBitBtn
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = ConnectionGroupBox
+          AnchorSideRight.Control = ConnectionGroupBox
+          AnchorSideRight.Side = asrBottom
+          Left = 378
+          Height = 26
+          Top = 2
+          Width = 43
+          Anchors = [akTop, akRight]
+          BorderSpacing.Left = 10
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 15
+          Enabled = False
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000064000000640000000000000000000000000000000000
+            000000000000000000001E8F3BFF1A8C36FF0000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000001C9139FF168E34FF128B30FF00000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000001A9238FF139031FF0E8E2DFF0A8B2AFF000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000189536FF119331FF0B8F2AFF068C27FF038924FF0000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000179837FF0F9630FF0A922BFF038E26FF008A21FF0086
+            21FF000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000169A35FF0E982FFF08952BFF019123FF008B23FF0086
+            21FF008521FF0000000000000000000000000000000000000000000000000000
+            00000000000000000000169D37FF0E9B31FF06972AFF019425FF008C23FF0088
+            20FF008722FF028723FF00000000000000000000000000000000000000000000
+            0000000000000000000015A038FF0D9F31FF069B2BFF019725FF009024FF008B
+            23FF008B21FF048A25FF0A8828FF000000000000000000000000000000000000
+            0000000000000000000016A139FF0EA132FF089D2DFF039927FF019525FF0091
+            22FF038D24FF078B26FF0E8A2BFF000000000000000000000000000000000000
+            0000000000000000000017A23AFF10A132FF0B9F2FFF069B2BFF039828FF0494
+            28FF089029FF0B8E2CFF00000000000000000000000000000000000000000000
+            0000000000000000000018A43AFF12A236FF0EA030FF0A9D2EFF09992BFF0A95
+            2DFF0D912CFF0000000000000000000000000000000000000000000000000000
+            000000000000000000001CA33DFF16A339FF13A136FF109D33FF0E9931FF1097
+            31FF000000000000000000000000000000000000000000000000000000000000
+            000000000000000000001DA33EFF1AA23BFF17A039FF169D37FF159A35FF0000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000021A241FF1DA13EFF1B9F3AFF1B9C3BFF000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000023A041FF239F40FF209D3EFF00000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            00000000000000000000269D45FF259D43FF0000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000
+          }
+          Margin = 0
+          OnClick = StartStopButtonClick
+          Spacing = 0
+          TabOrder = 1
+        end
+        object ReScanButton: TButton
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = ConnectionGroupBox
+          AnchorSideRight.Control = StartStopButton
+          Left = 299
+          Height = 26
+          Top = 2
+          Width = 69
+          Anchors = [akTop, akRight]
+          BorderSpacing.Top = 2
+          Caption = 'ReScan'
+          OnClick = ReScanButtonClick
+          TabOrder = 2
+        end
+        object DeviceStatusLabel: TLabel
+          AnchorSideLeft.Control = ConnectionGroupBox
+          AnchorSideTop.Side = asrBottom
+          AnchorSideBottom.Control = ConnectionGroupBox
+          AnchorSideBottom.Side = asrBottom
+          Left = 15
+          Height = 15
+          Top = 34
+          Width = 153
+          Anchors = [akLeft, akBottom]
+          BorderSpacing.Left = 15
+          BorderSpacing.Bottom = 5
+          Caption = 'Device status: NotConnected'
+          ParentColor = False
+        end
+        object FirmwareVersionLabel: TLabel
+          AnchorSideTop.Side = asrBottom
+          AnchorSideRight.Control = ConnectionGroupBox
+          AnchorSideRight.Side = asrBottom
+          AnchorSideBottom.Control = ConnectionGroupBox
+          AnchorSideBottom.Side = asrBottom
+          Left = 201
+          Height = 15
+          Top = 34
+          Width = 220
+          Anchors = [akRight, akBottom]
+          AutoSize = False
+          BorderSpacing.Right = 15
+          BorderSpacing.Bottom = 5
+          Caption = 'Device firmware version: undefined'
+          ParentColor = False
+        end
+      end
+      object PingGroupBox: TGroupBox
+        AnchorSideLeft.Control = MainTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = ConnectionGroupBox
+        AnchorSideTop.Side = asrBottom
+        Left = 16
+        Height = 102
+        Top = 87
+        Width = 440
+        BorderSpacing.Top = 5
+        ClientHeight = 82
+        ClientWidth = 436
+        Constraints.MinHeight = 102
+        Constraints.MinWidth = 440
+        ParentColor = False
+        TabOrder = 1
+        object NetMonitoringCheckBox: TCheckBox
+          AnchorSideLeft.Control = PingGroupBox
+          AnchorSideTop.Control = PingGroupBox
+          Left = 15
+          Height = 19
+          Top = 3
+          Width = 128
+          BorderSpacing.Left = 15
+          BorderSpacing.Top = 3
+          Caption = 'Network monitoring'
+          OnChange = NetMonitoringCheckBoxChange
+          TabOrder = 0
+        end
+        object NetAddressEdit: TEdit
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = NetMonitoringCheckBox
+          AnchorSideTop.Side = asrCenter
+          AnchorSideRight.Control = PingGroupBox
+          AnchorSideRight.Side = asrBottom
+          Left = 157
+          Height = 23
+          Hint = 'Example of correct addresses:'#13#10'www.google.com'#13#10'google.com'#13#10'http://google.com'#13#10'8.8.8.8'
+          Top = 1
+          Width = 264
+          Anchors = [akTop, akRight]
+          BorderSpacing.Right = 15
+          Font.Color = clSilver
+          OnClick = NetAddressEditClick
+          OnExit = NetAddressEditExit
+          OnKeyPress = NetAddressEditKeyPress
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          Text = 'paste here IP or URL address'
+        end
+        object PingTimeoutTrackBar: TTrackBar
+          AnchorSideLeft.Control = PingTimeoutLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = PingTimeoutLabel
+          AnchorSideRight.Control = PingTimeoutSecLabel
+          Left = 87
+          Height = 24
+          Top = 32
+          Width = 291
+          Frequency = 50
+          Max = 2000
+          Min = 1
+          OnChange = PingTimeoutTrackBarChange
+          Position = 1000
+          TickStyle = tsNone
+          Anchors = [akTop, akLeft, akRight]
+          Enabled = False
+          TabOrder = 2
+        end
+        object PingTimeoutSecLabel: TLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = PingTimeoutLabel
+          AnchorSideRight.Control = NetAddressEdit
+          AnchorSideRight.Side = asrBottom
+          Left = 378
+          Height = 15
+          Top = 32
+          Width = 43
+          Anchors = [akTop, akRight]
+          Caption = '1000 ms'
+          Enabled = False
+          ParentColor = False
+        end
+        object PingTimeoutLabel: TLabel
+          AnchorSideLeft.Control = NetMonitoringCheckBox
+          AnchorSideTop.Control = NetAddressEdit
+          AnchorSideTop.Side = asrBottom
+          Left = 15
+          Height = 15
+          Top = 32
+          Width = 72
+          BorderSpacing.Top = 8
+          Caption = 'Ping timeout:'
+          Enabled = False
+          ParentColor = False
+        end
+        object PingStatusLabel: TLabel
+          AnchorSideLeft.Control = PingTimeoutLabel
+          AnchorSideTop.Control = PingTimeoutLabel
+          AnchorSideTop.Side = asrBottom
+          Left = 15
+          Height = 15
+          Top = 58
+          Width = 61
+          BorderSpacing.Top = 11
+          Caption = 'Ping status:'
+          Enabled = False
+          ParentColor = False
+        end
+        object PingStatusIndicatorLabel: TLabel
+          AnchorSideLeft.Control = PingStatusLabel
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = PingStatusLabel
+          Left = 91
+          Height = 15
+          Top = 58
+          Width = 45
+          BorderSpacing.Left = 15
+          Caption = 'Disabled'
+          Font.Color = clGray
+          ParentColor = False
+          ParentFont = False
+        end
+      end
+      object ButtonsGroupBox: TGroupBox
+        AnchorSideLeft.Control = MainTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = PingGroupBox
+        AnchorSideTop.Side = asrBottom
+        Left = 16
+        Height = 60
+        Top = 194
+        Width = 440
+        BorderSpacing.Top = 5
+        ClientHeight = 40
+        ClientWidth = 436
+        Constraints.MaxHeight = 60
+        Constraints.MinHeight = 60
+        Constraints.MinWidth = 440
+        Enabled = False
+        TabOrder = 2
+        object SoftResetButton: TButton
+          AnchorSideTop.Control = HardResetButton
+          AnchorSideRight.Control = HardResetButton
+          Left = 15
+          Height = 25
+          Top = 3
+          Width = 126
+          Anchors = [akTop, akRight]
+          BorderSpacing.Right = 14
+          Caption = 'Soft Reset [F1]'
+          OnClick = SoftResetButtonClick
+          TabOrder = 0
+        end
+        object HardResetButton: TButton
+          AnchorSideLeft.Control = ButtonsGroupBox
+          AnchorSideLeft.Side = asrCenter
+          AnchorSideTop.Control = ButtonsGroupBox
+          Left = 155
+          Height = 25
+          Top = 3
+          Width = 126
+          BorderSpacing.Top = 3
+          Caption = 'Hard Reset [F2]'
+          OnClick = HardResetButtonClick
+          TabOrder = 1
+        end
+        object PowerOffButton: TButton
+          AnchorSideLeft.Control = HardResetButton
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = SoftResetButton
+          Left = 295
+          Height = 25
+          Top = 3
+          Width = 126
+          BorderSpacing.Left = 14
+          Caption = 'Power OFF [F3]'
+          Enabled = False
+          OnClick = PowerOffButtonClick
+          TabOrder = 2
+        end
+      end
+    end
+    object DeviceTabSheet: TTabSheet
+      Caption = 'Device'
+      ClientHeight = 265
+      ClientWidth = 472
+      object PowerModeRadioGroup: TRadioGroup
+        AnchorSideLeft.Control = DeviceTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = DeviceTabSheet
+        Left = 16
+        Height = 80
+        Top = 8
+        Width = 440
+        AutoFill = True
+        BorderSpacing.Top = 8
+        Caption = 'USB Power mode'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 1
+        ClientHeight = 60
+        ClientWidth = 436
+        Constraints.MinWidth = 440
+        Enabled = False
+        ItemIndex = 0
+        Items.Strings = (
+          'USB power is turned off together with the main power'
+          'USB power in SB mode'
+        )
+        OnClick = PowerModeRadioGroupClick
+        TabOrder = 0
+      end
+      object WaitingTimeGroupBox: TGroupBox
+        AnchorSideLeft.Control = DeviceTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = PowerModeRadioGroup
+        AnchorSideTop.Side = asrBottom
+        Left = 16
+        Height = 80
+        Top = 93
+        Width = 440
+        BorderSpacing.Top = 5
+        Caption = 'Waiting time'
+        ClientHeight = 60
+        ClientWidth = 436
+        Constraints.MinHeight = 80
+        Constraints.MinWidth = 440
+        Enabled = False
+        TabOrder = 1
+        object WaitingTimeTrackBar: TTrackBar
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = WaitingTimeGroupBox
+          Left = 8
+          Height = 25
+          Top = 22
+          Width = 376
+          Frequency = 3
+          Max = 127
+          Min = 1
+          OnChange = WaitingTimeTrackBarChange
+          Position = 1
+          TickMarks = tmTopLeft
+          BorderSpacing.Left = 8
+          BorderSpacing.Top = 22
+          TabOrder = 0
+        end
+        object WaitingSecLabel: TLabel
+          AnchorSideLeft.Control = WaitingTimeTrackBar
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Control = WaitingTimeGroupBox
+          Left = 384
+          Height = 15
+          Top = 25
+          Width = 35
+          Alignment = taRightJustify
+          BorderSpacing.Top = 25
+          Caption = '10 sec'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object s10Label: TLabel
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = WaitingTimeGroupBox
+          Cursor = crHandPoint
+          Left = 11
+          Height = 15
+          Top = 8
+          Width = 17
+          BorderSpacing.Left = 11
+          BorderSpacing.Top = 8
+          Caption = '10s'
+          ParentColor = False
+          OnClick = TimeLabelCLick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
+        end
+        object m20Label: TLabel
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = s10Label
+          Cursor = crHandPoint
+          Left = 340
+          Height = 15
+          Top = 8
+          Width = 23
+          BorderSpacing.Left = 340
+          Caption = '20m'
+          ParentColor = False
+          OnClick = TimeLabelCLick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
+        end
+        object m3Label: TLabel
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = s10Label
+          Cursor = crHandPoint
+          Left = 58
+          Height = 15
+          Top = 8
+          Width = 17
+          BorderSpacing.Left = 58
+          Caption = '3m'
+          ParentColor = False
+          OnClick = TimeLabelCLick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
+        end
+        object m5Label: TLabel
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = s10Label
+          Cursor = crHandPoint
+          Left = 92
+          Height = 15
+          Top = 8
+          Width = 17
+          BorderSpacing.Left = 92
+          Caption = '5m'
+          ParentColor = False
+          OnClick = TimeLabelCLick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
+        end
+        object m10Label: TLabel
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = s10Label
+          Cursor = crHandPoint
+          Left = 172
+          Height = 15
+          Top = 8
+          Width = 23
+          BorderSpacing.Left = 172
+          Caption = '10m'
+          ParentColor = False
+          OnClick = TimeLabelCLick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
+        end
+        object m15Label: TLabel
+          AnchorSideLeft.Control = WaitingTimeGroupBox
+          AnchorSideTop.Control = s10Label
+          Cursor = crHandPoint
+          Left = 256
+          Height = 15
+          Top = 8
+          Width = 23
+          BorderSpacing.Left = 256
+          Caption = '15m'
+          ParentColor = False
+          OnClick = TimeLabelCLick
+          OnMouseLeave = TimeLabelMouseLeave
+          OnMouseMove = TimeLabelMouseMove
+        end
+      end
+      object ModesRadioGroup: TRadioGroup
+        AnchorSideLeft.Control = DeviceTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = WaitingTimeGroupBox
+        AnchorSideTop.Side = asrBottom
+        Left = 16
+        Height = 61
+        Top = 178
+        Width = 440
+        AutoFill = True
+        BorderSpacing.Top = 5
+        Caption = 'Modes'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 3
+        ClientHeight = 41
+        ClientWidth = 436
+        Columns = 3
+        Constraints.MinWidth = 440
+        Enabled = False
+        ItemIndex = 0
+        Items.Strings = (
+          'Soft Reset'
+          'Hard Reset'
+          'Power OFF'
+        )
+        OnClick = ModesRadioGroupClick
+        TabOrder = 2
+      end
+    end
+    object AppTabSheet: TTabSheet
+      Caption = 'Application'
+      ClientHeight = 265
+      ClientWidth = 472
+      object CheckBox1: TCheckBox
+        AnchorSideLeft.Control = AppTabSheet
+        AnchorSideTop.Control = AppTabSheet
+        Left = 20
+        Height = 19
+        Top = 30
+        Width = 181
+        BorderSpacing.Left = 20
+        BorderSpacing.Top = 30
+        Caption = 'App launch in minimized state'
+        TabOrder = 0
+      end
+      object CheckBox2: TCheckBox
+        AnchorSideLeft.Control = CheckBox1
+        AnchorSideTop.Control = CheckBox1
+        AnchorSideTop.Side = asrBottom
+        Left = 20
+        Height = 19
+        Top = 59
+        Width = 151
+        BorderSpacing.Top = 10
+        Caption = 'App launch with OS start'
+        OnChange = CheckBox2Change
+        TabOrder = 1
+      end
+      object CheckBox3: TCheckBox
+        AnchorSideLeft.Control = CheckBox1
+        AnchorSideTop.Control = CheckBox2
+        AnchorSideTop.Side = asrBottom
+        Left = 20
+        Height = 19
+        Top = 88
+        Width = 173
+        BorderSpacing.Top = 10
+        Caption = 'Automatically check updates'
+        OnChange = CheckBox3Change
+        TabOrder = 2
+      end
+      object CheckBox4: TCheckBox
+        AnchorSideLeft.Control = CheckBox1
+        AnchorSideTop.Control = CheckBox3
+        AnchorSideTop.Side = asrBottom
+        Left = 20
+        Height = 19
+        Top = 117
+        Width = 161
+        BorderSpacing.Top = 10
+        Caption = 'Use logfile in app directory'
+        OnChange = CheckBox4Change
+        OnClick = CheckBox4Click
+        TabOrder = 3
+      end
+      object CheckBox5: TCheckBox
+        AnchorSideLeft.Control = CheckBox1
+        AnchorSideTop.Control = CheckBox4
+        AnchorSideTop.Side = asrBottom
+        Left = 20
+        Height = 19
+        Top = 146
+        Width = 139
+        BorderSpacing.Top = 10
+        Caption = 'Minimize on close app'
+        TabOrder = 4
+      end
+      object CheckBox6: TCheckBox
+        AnchorSideLeft.Control = CheckBox1
+        AnchorSideTop.Control = CheckBox5
+        AnchorSideTop.Side = asrBottom
+        Left = 20
+        Height = 19
+        Top = 175
+        Width = 148
+        BorderSpacing.Top = 10
+        Caption = 'Minimize app in SysTray'
+        TabOrder = 5
+      end
+      object CleanLogButton: TSpeedButton
+        AnchorSideLeft.Control = CheckBox4
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = CheckBox4
+        AnchorSideTop.Side = asrCenter
+        Left = 196
+        Height = 25
+        Top = 114
+        Width = 25
+        BidiMode = bdRightToLeft
+        BorderSpacing.Left = 15
+        Flat = True
+        Glyph.Data = {
+          36090000424D3609000000000000360000002800000018000000180000000100
+          20000000000000090000640000006400000000000000000000008FB1C7008CAF
+          C4005787A7006C91AA00658DA7005984A0006289A200407597007B9EB600789A
+          B200517F9C007AA1BB005585A3005A829B41487CA19E4173921F55809D00658A
+          A40095ADBD00A9BCC900A6B9C700A6B9C700A6B9C700A6B9C7008FB1C7008CAF
+          C4005787A7006C91AA00658DA7005984A0006289A200407597007B9EB600789A
+          B200517E9B0081A4BA004E80A26D589ECCF36CC3F0FF4983A8C2537A9312668B
+          A40095ADBD00A9BCC900A6B9C700A6B9C700A6B9C700A6B9C7008FB1C7008CAF
+          C4005787A7006C91AA00658DA7005984A0006289A200407597007D9FB7007F9C
+          B2004E7A951B3B6A8BB959A4CAFF97EDFFFF96E8FFFF77C8F7FF427A9DC26887
+          9C0897AEBE00A9BCC900A6B9C700A6B9C700A6B9C700A6B9C7008FB1C7008CAF
+          C4005787A7006C91AA00658DA7005984A0006289A200407698007B9BAF006687
+          A04A5093BEE8549DC8FF4787B0FF82CEFAFF8AD8FFFF91E3FFFF68BCEFFF4E7E
+          9C9E9AACB800AABCC900A6B9C700A6B9C700A6B9C700A6B9C7008FB1C7008CAF
+          C4005787A7006C91AA00648DA7005984A0006289A100467796105A8AAE9756A0
+          D1FF89DEFFFF98EBFFFF70BAE1FF5294C1FF80CCFFFF86D2FFFF91E4FFFF59AB
+          DAFF6B8EAA84B6C2CD00A9BBC900A6B8C600A6B8C600A6B8C6008FB1C7008CAF
+          C4005787A7006C91AA00658DA9005A829C005E829B3A235E84DE6FC0E6FF9CF1
+          FFFF86D2FFFF7FCBFFFF8FE0FFFF7FCDFAFF76C0F1FF84D0FFFF84D0FFFF8DE1
+          FFFF4F9ACCFF6695954E94AEC100AABFCD00AAC4C800A9C3C9008FB1C7008CAF
+          C4005687A5007095AE006B8CA204407394775FA4CEFD478BB5FF4684AAFF85D2
+          FBFF8ADAFFFF7FCCFFFF80CDFFFF86D5FFFF84D1FFFF81CFFFFF7FC9FFFF8AD6
+          FFFF8CEEFFFF418DAEE27F8EB81CB1C8D200ACC9CB00ABC7CB0090B1C7008DAF
+          C6005D8BA8005C829B1E5185AAC265B5E5FF8FE3FFFF93E3FFFF60A4D1FF4A8A
+          B1FF80CCFDFF88D6FFFF81CFFFFF82CEFFFF81CCFFFF82CFFFFF8BE4FFFF92F1
+          FFFF7EBAFFFF4054F3FF556DC0AEAECEC900A7CAD100A5C8D1008FB1C6008AAD
+          C2035382A398468FC1FF81DBFFFF9CEFFFFF8AD7FFFF83D1FFFF92E3FFFF7AC5
+          F0FF65ACDAFF81CEFFFF83CFFFFF83D1FFFF8CE7FFFF89E0FFFF6FA4FBFF556B
+          F0FF4E5AEDFF87D7FFFF3FBAF1FF7698B268E0C09B00D4BD9F0086ABC308779E
+          BB313B779CC85798C2E369AFD7ED6CB6E5FF7ED1FFFF8EE0FFFF87D6FFFF87D7
+          FFFF82CFFFFF7AC1F9FF87D9FFFF8EEAFFFF80C9FFFF566EF2FF576AEFFF6490
+          F9FF76E0FFFF7AF4FFFF85A5ACFFAA7740DEE3AF7915DCAB770086ABC2037CA2
+          BE024880A3006C90A8005179942543799B685189AFC261AAD8FF84D9FFFF8DDC
+          FFFF82CEFFFF92EFFFFF87DDFFFF5A78F4FF4649E7FF6691FAFF8AFDFFFF7AF9
+          FFFF7FBACBFFAF8057FFFAA025FFF4A94CFFB279336BB97E350086ABC2007CA2
+          BE004780A3006990AA0053809D004E84A80059809C01467391484E87B0D973C6
+          EEFF93EFFFFF6EA1FDFF4647E6FF658DFBFF83EDFFFF78F7FFFF77BADDFFA585
+          67FFE48913FFFFB54FFFFFD794FFE0A862FFB47B365ABA813B0086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005684A40054809D00708D9F0A4A88
+          9AAB5481F0FF5E6BFFFF70B3FBFF7BFCFFFF77D7F1FF95968CFFD38529FFFEA7
+          33FFFFC377FFFFCC8DFFE4A558FFC08947B8CDB09105CDAD8B0086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A40052809E007A9FAC004465
+          9500343CA89D64D1FAFF81FAFFFF8C9C9CFFCA802DFFFAA025FFFFC578FFFBC5
+          86FFF6BC79FFCC914AF9A7640080BE915F05D2B39300CFAF8D0086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A400507D9D007D9EB30089B3
+          D7008DBED9006D909BBEBA824FFFFEA123FFFFC46FFFFFCC8FFFF2B66FFFF7BD
+          7AFFFCC07BFFCC8E42FDC19A722DD7BDA200D8BEA300D7BDA20086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004D7C9A00809FB500A7D4
+          EB00A1DBFA00BFA08337DF8200EEFFC376FFFAC180FFD79C59EBB97C2DD9EBAE
+          63FFFFCD8DFFEEAD60FFC496619EDAC6B300DEC7B200DDC6B00086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C4B19900C38C4F3EC08945B6BF8438B7B5824143C2A58404C88E
+          47DBF7B86FFFFFC683FFD09144F8C5A17C2FCCAB8900CCAA860086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9400C8935900BB8F5F00B4814400B67D3800D4BDA200C49F
+          795BD18B2FFFFFD08EFFEAAB5DFFBB86469DC19B7300C1976B0086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9500C7915600BE8F5A00B7814200BA854600D6BDA400D0B9
+          9E00BB87499EEDAD5CFFFFCB85FFCC8F46E6C19D7821C8A37E0086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9500C7915600BE8F5A00B47D3800C2915A00E1CFBE00E2D1
+          C000D0B9A11EC17F29E5FFC67EFFEBAB5DFFBB895587CAAA8B0086ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9500C7915600BE8F5A00B57E3C00C3946100DFCCBB00DFCA
+          B700D8C2AD00B88C5854D99A4AFFFFC980FFC88A40E5C5A3811E86ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9500C7915600BC8D5600BB895100D8BFA400DCC6B100DBC4
+          AE00DBC3AD00DBC7B400BF8B4FADEFB364FFEDB56EFFC1905D7286ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9500C7915600BC8C5600BB8A5200DAC3AB00DBC5B000DAC3
+          AD00DAC3AD00DFCBB800C19C7A1FC5883BE2FABF75FFBF7E2DBE86ABC2007CA2
+          BE004780A3006990AA0054809D004D83A7005784A4004F7C9B007E9EB6009ECA
+          E40099CFF100C1AD9500C7915600BC8C5400BB8A5200DDC6B000E0CBB800DFC9
+          B400DFC9B400E0CAB500DECAB700CDA98345B46C00D2D2AD814C
+        }
+        OnClick = CleanLogButtonClick
+        ParentBidiMode = False
+      end
+      object SplitterShape: TShape
+        AnchorSideLeft.Control = AppTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = CheckBox1
+        Left = 236
+        Height = 164
+        Top = 30
+        Width = 1
+        Pen.Color = clGray
+      end
+      object CheckBox7: TCheckBox
+        AnchorSideLeft.Control = SplitterShape
+        AnchorSideTop.Control = AppTabSheet
+        Left = 256
+        Height = 19
+        Top = 30
+        Width = 199
+        BorderSpacing.Left = 20
+        BorderSpacing.Top = 30
+        Caption = 'Save selected serial port as default'
+        OnChange = CheckBox7Change
+        TabOrder = 6
+      end
+      object CheckBox8: TCheckBox
+        AnchorSideLeft.Control = CheckBox7
+        AnchorSideTop.Control = CheckBox7
+        AnchorSideTop.Side = asrBottom
+        Left = 256
+        Height = 19
+        Top = 59
+        Width = 197
+        BorderSpacing.Top = 10
+        Caption = 'Connect to device when app start'
+        Enabled = False
+        TabOrder = 7
+      end
+      object ChkAppUpdatesButton: TButton
+        AnchorSideLeft.Control = AppTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideBottom.Control = AppTabSheet
+        AnchorSideBottom.Side = asrBottom
+        Left = 171
+        Height = 30
+        Top = 225
+        Width = 131
+        Anchors = [akLeft, akBottom]
+        BorderSpacing.Bottom = 10
+        Caption = 'Check updates'
+        OnClick = ChkAppUpdatesButtonClick
+        TabOrder = 8
+      end
+      object DefaultButton: TBitBtn
+        AnchorSideTop.Control = ChkAppUpdatesButton
+        AnchorSideRight.Control = AppTabSheet
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Side = asrBottom
+        Left = 437
+        Height = 30
+        Hint = 'Set app default settings'
+        Top = 225
+        Width = 30
+        Anchors = [akTop, akRight]
+        BorderSpacing.Right = 5
+        Glyph.Data = {
+          36090000424D3609000000000000360000002800000018000000180000000100
+          2000000000000009000064000000640000000000000000000000629B2F035F6E
+          56116185470762A220045F705510628C420664B90003607A4F0A628C42065E61
+          5C665E605D925E615C815E615C7D5E605D8D5E605D7C6078500B60814A08617D
+          4D0964B900036078500B5F72540E64B9000360814A085F645B0E62953805629B
+          2F06607850126187450964B900055F7254186076521064B900046082490D5E60
+          5DD65E605DFF5E5F5DFF5E5E5EFF5E5F5DFF5E605DF45F6B582364B900046083
+          480A5F6D571864B90005607F4B0E6079501164B900055F7354095F7055106193
+          3A07639F270764B900046077510F5E605DD15E605DBE64B9000464B900045E60
+          5DC45E605DFF5E5E5EFF5E5E5EFF5E5E5EFF5E5F5DE65F73541264B900045E60
+          5D8C5E605DE05E675A2964B90004617D4D0C6077510F629B2F03629538056074
+          531164B90005618745095E605DBF5E5F5DFF5E5F5DFF5E605D90629735085E60
+          5DC85E5E5EFF5F6B58FF629C2DFF5F7055FF5E5E5EE8617D4D0C5E625C665E5F
+          5DFF5E5F5DFF5E605DD65F6A581D64B90004617D4D0C5F6C570D6295380564B9
+          0004617D4D0F5E605DB35E5F5DFF5E5F5DFF5E5F5DFF5E5E5EFF5E5E5ED85E5F
+          5DF65F7254FF63AD00FF64B900FF619439FF5E5E5EFA5E5E5ED55E5E5EF35E60
+          5DFF5E5F5DFF5E5F5DFF5E605DD15E69592864B900045F71550A628C4206628C
+          42085E605DCB5E5F5DFF5E5F5DFF5E5F5DFF5E5E5EFF5E5E5EFF5E5E5EFF5E5E
+          5EFF639E29FF64B900FF64B900FF64B900FF64B100FF618B41FF5E615CFF5E5E
+          5EFF5E5F5DFF5E605DFF5E5F5DFF5E5F5DE85E675A2764B9000264B900036193
+          3A075E605DAB5E5F5DFF5E5F5DFF5E5E5EFF5F655BFF63A025FF617C4EFF5E5E
+          5EFF5F7354FF64B600FF64B900FF63A123FF63AD00FF64B900FF63A517FF5F65
+          5BFF5E5E5EFF5E5F5DFF5E5F5DFF5E605DCE5F6B581B64B9000162A2200464B9
+          000464B900055E615C7C5E5E5EFF5E5E5EFF62A51AFF64B900FF618943FF5E5E
+          5EFF5E5E5EFF60814AFF62A220FF5F635CFF5E5E5EFF628D41FF64B900FF63AA
+          01FF5E615CFF5E5E5EFF5E615CA664B9000564B90004607652085F7055106079
+          500E64B900055F6A58165E5E5ED5618C40FF64B900FF61933AFF5E605DFF5E5E
+          5EFF5E5E5EFF5E5E5EFA5E5F5DF95E5E5EFF5E5E5EFF5E5E5EFF628C42FF64B9
+          00FF629538FF5E5E5EF75F645B2C64B900056079500E5F6D57065E605D775E5F
+          5DEB5E605DC65E5E5ECD5E625CF764B600FF63B200FF5E5E5EFF5E5E5EFF5E5E
+          5EFF5E5E5EB15E5E5E2E5E5E5E235E5E5E995E5E5EFF5E5E5EFF5E5E5EFF63AC
+          00FF64B900FF5E6959FD5E5E5ED05E605DC15E5F5DE85E5F5D945E605D875E5F
+          5DFF5E605DFF5E5E5EFF607C4EFF64B900FF628F3FFF5E5E5EFF5E5E5EFF5E5E
+          5EA964B9000064B9000064B9000064B900005E5E5E8F5E5F5DFF5E5E5EFF6186
+          46FF64B900FF608249FF5E5E5EFF5E5F5DFF5E5F5DFF5E5F5DB65E605D895E60
+          5DFF5E5F5DFF5E5E5EFF618844FF64B900FF607950FF5E5E5EFF5E5F5DFC5E5E
+          5E3E64B900005E5E5E045E5E5E0D64B900005E5E5E185E5F5DF25E5E5EFF5F71
+          55FF64B900FF62903EFF5E5E5EFF5E5F5DFF5E5F5DFF5E5F5DAB5E605D845E60
+          5DFF5E5F5DFF5E5E5EFF618943FF64B900FF607751FF5E5E5EFF5E5E5EF95E5E
+          5E3264B900005E5E5E055E5E5E0464B900005E5E5E115E5F5DEF5E5E5EFF5F70
+          55FF64B900FF61923BFF5E5E5EFF5E5F5DFF5E5F5DFF5E5F5DAB5E605D865E60
+          5DFF5E605DFF5E5E5EFF60804BFF64B900FF618745FF5E5E5EFF5E5E5EFF5E5E
+          5E9A64B9000064B9000064B9000064B900005E5E5E7E5E5F5DFF5E5E5EFF617E
+          4CFF64B900FF618745FF5E5E5EFF5E5F5DFF5E5F5DFF5E5E5EB35E605D815E5F
+          5DF75E605DD35E5E5EDC5E6959FA64B900FF63A908FF5E5E5EFF5E5E5EFF5E5E
+          5EFF5E5E5E925E5E5E185E5E5E185E5E5E795E5E5EF95E5E5EFF5E5E5EFF63A1
+          23FF64B900FF5F7155FE5E5E5EE15E605DD85E5F5DF95E5F5D9C5F72540E5F70
+          551564B900045F6A58165E5E5ED4629B2FFF64B900FF608348FF5E5E5EFF5E5E
+          5EFF5E5F5DFF5E5F5DF65E5F5DF65E5F5DFF5E5E5EFF5E5E5EFF607C4EFF64B9
+          00FF62A51AFF5E5E5EF85F625C2B64B900045F6C571A5F6C570D64B9000364B9
+          000464B900045F625C6D5E5E5EFD5F645BFF64B000FF64B900FF617C4EFF5E5E
+          5EFF5E5E5EFF5E5E5EFF5E5E5EFF5E5E5EFF5E5E5EFF607751FF64B600FF63B4
+          00FF5E6959FF5E5E5EFF5E615C9064B9000464B9000460834805607A4F0A64B9
+          00045E615C955E5F5DFF5E5F5DFF5E5E5EFF5F6E56FF63B200FF64B900FF62A2
+          20FF617C4EFF5E6959FF5E6959FF607A4FFF639E29FF64B900FF64B600FF6074
+          53FF5E5E5EFF5E5F5DFF5E5F5DFF5E605DBB5F73541264B9000164B90003617D
+          4D0C5E605DCE5E5F5DFF5E605DFF5E5F5DFF5E5E5EFF5F6A58FF639F27FF64B9
+          00FF64B900FF64B900FF64B900FF64B900FF64B900FF63A517FF5F6E56FF5E5E
+          5EFF5E5F5DFF5E605DFF5E5F5DFF5E605DE75E675A2864B9000262A2200464B9
+          00045F6D57185E605DBF5E5F5DFF5E605DFF5E5F5DFF5E5E5EFF5E5E5EE85F6E
+          56FA618A42FF629735FF629833FF628C42FF5F7254FD5E5E5EE75E5E5EFA5E5F
+          5DFF5E605DFF5E5F5DFF5E605DDE5F655B3464B900045F655B0D6076520C64B9
+          000464B90004607652105E605DCB5E5F5DFF5E5F5DFF5E615CA55F6A58165E5E
+          5ECC5E5E5EFF5E5E5EFF5E5E5EFF5E5E5EFF5E5E5EEB5F635C125E625C765E5F
+          5DFF5E5F5DFF5E605DE05E675A2964B900046187450964B900025F72540E607B
+          4E0D64B9000464B900045F7254175E605DDF5E605DD064B9000464B900055E60
+          5DC25E5F5DFF5E5E5EFF5E5E5EFF5E5F5DFF5E605DE6617D4D0F64B900055E60
+          5D9F5E5F5DF15E675A3264B90005629B2F0660775113617D4D0664B900025F6C
+          570D5F6E560B64B9000264B900035F635C215F655B1864B900025F6E560B5E5F
+          5DD15E5F5DFF5E5F5DFF5E5F5DFF5E5F5DFF5E5F5DF35F645B1C64B900025F70
+          55105F635C2564B900025F6D570C617D4D06628C42045E5E5E0D5E68590964B9
+          00015F655B0C5E675A0A64B90002628C4202628C420264B90001607652045E5F
+          5D875E5E5EAC5E5F5D9A5E5F5DA05E5F5DA75E5F5D955E625C1764B9000164B9
+          00016076520460765204607652045F645B0E5F7155055E5E5E03
+        }
+        OnClick = DefaultButtonClick
+        ParentShowHint = False
+        ShowHint = True
+        Spacing = 0
+        TabOrder = 9
+      end
+    end
+    object AboutTabSheet: TTabSheet
+      Caption = 'About'
+      ClientHeight = 265
+      ClientWidth = 472
+      object TitleLabel: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = AboutTabSheet
+        Left = 32
+        Height = 30
+        Top = 20
+        Width = 408
+        BorderSpacing.Top = 20
+        Caption = 'USB WatchDog utility v0.1 (Nov 20 2020)'
+        Font.Height = -21
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object InfoLabel: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = TitleLabel
+        AnchorSideTop.Side = asrBottom
+        Left = 55
+        Height = 30
+        Top = 65
+        Width = 362
+        Alignment = taCenter
+        BorderSpacing.Top = 15
+        Caption = 'If you find a bug and want to help in the development of the project,'#13#10'please let us know by e-mail.'
+        ParentColor = False
+      end
+      object XMRWalletLabel: TLabel
+        Tag = 1
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = InfoLabel1
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 31
+        Height = 13
+        Hint = 'Click to copy'
+        Top = 163
+        Width = 410
+        BorderSpacing.Top = 5
+        Caption = 'V6Sq14vyBmTNj1tU2u7GcgdrF1RBo2rU ... P5b82ZyiLjsXgf47mvWLcegh64w2i6PLd'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = WalletsLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
+      end
+      object ETHWalletLabel: TLabel
+        Tag = 2
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = XMRWalletLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 118
+        Height = 13
+        Hint = 'Click to copy'
+        Top = 186
+        Width = 236
+        BorderSpacing.Top = 10
+        Caption = '0x7ff6922B03dEe00f597608963CE3e2a1697734'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = WalletsLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
+      end
+      object CopiedLabel: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = BTCWalletLabel
+        AnchorSideTop.Side = asrBottom
+        Left = 207
+        Height = 21
+        Top = 229
+        Width = 59
+        BorderSpacing.Top = 7
+        Caption = 'Copied!'
+        Font.Color = clGray
+        Font.Height = -16
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        Visible = False
+      end
+      object BTCWalletLabel: TLabel
+        Tag = 3
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = ETHWalletLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 132
+        Height = 13
+        Hint = 'Click to copy'
+        Top = 209
+        Width = 208
+        BorderSpacing.Top = 10
+        Caption = 'XEeobatKNngk3LETR71Botd6SLpyTRHtb5'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = WalletsLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
+      end
+      object SupportEmailLabel: TLabel
+        Tag = 1
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = InfoLabel
+        AnchorSideTop.Side = asrBottom
+        Cursor = crHandPoint
+        Left = 168
+        Height = 13
+        Hint = 'Click to send email'
+        Top = 100
+        Width = 137
+        BorderSpacing.Top = 5
+        Caption = 'support@usbwatchdog.ru'
+        Font.Color = clHighlight
+        Font.Height = -11
+        ParentColor = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = SupportEmailLabelClick
+        OnMouseLeave = WalletsLabelMouseLeave
+        OnMouseMove = WalletsLabelMouseMove
+      end
+      object InfoLabel1: TLabel
+        AnchorSideLeft.Control = AboutTabSheet
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = SupportEmailLabel
+        AnchorSideTop.Side = asrBottom
+        Left = 21
+        Height = 30
+        Top = 128
+        Width = 430
+        Alignment = taCenter
+        BorderSpacing.Top = 15
+        Caption = 'If you liked this utility, you can thank its authors.'#13#10'Just send as much as you want to Monero or Ethereum or Bitcoin wallet adresses: '
+        ParentColor = False
+      end
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 32
+    Top = 293
+    Width = 480
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 480
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 1
+    object PanelLabel1: TLabel
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 321
+      Height = 15
+      Top = 9
+      Width = 151
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 8
+      Caption = '© 2020 Designed by MB6718'
+      Enabled = False
+      ParentColor = False
+    end
+    object HelpButton: TSpeedButton
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      Left = 10
+      Height = 20
+      Hint = 'Show man page'
+      Top = 5
+      Width = 20
+      BorderSpacing.Left = 10
+      BorderSpacing.Top = 5
+      Flat = True
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        2000000000000004000064000000640000000000000000000000A43F1D03A43F
+        1D05A43F1D00A43F1D00A43F1D3CA43F1DA0A43F1DE5A43F1DFFA43F1DFFA43F
+        1DE5A43F1DA0A43F1D3CA43F1D00A43F1D00A43F1D05A43F1D03A43F1D05A43F
+        1D00A43F1D04A43F1DA6A43F1DFFA43F1DEAA43F1D96A43F1D52A43F1D47A43F
+        1D93A43F1DEAA43F1DFFA43F1DA6A43F1D04A43F1D00A43F1D04A43F1D00A43F
+        1D04A43F1DBDA43F1DFFA43F1D79A43F1D05A43F1D00A43F1D20A43F1D38A43F
+        1D00A43F1D05A43F1D79A43F1DFFA43F1DBDA43F1D04A43F1D00A43F1D00A43F
+        1DB0A43F1DFFA43F1D3EA43F1D00A43F1D00A43F1D00A43F1DEBA43F1DFFA43F
+        1D0DA43F1D00A43F1D00A43F1D3EA43F1DFFA43F1DAFA43F1D00A43F1D3AA43F
+        1DFFA43F1D7DA43F1D00A43F1D04A43F1D03A43F1D00A43F1D64A43F1D83A43F
+        1D06A43F1D02A43F1D04A43F1D00A43F1D7CA43F1DFFA43F1D3BA43F1DAAA43F
+        1DE6A43F1D00A43F1D00A43F1D05A43F1D02A43F1D04A43F1D18A43F1D18A43F
+        1D00A43F1D02A43F1D06A43F1D00A43F1D00A43F1DE6A43F1DA9A43F1DEAA43F
+        1D93A43F1D00A43F1D01A43F1D04A43F1D00A43F1D03A43F1DE8A43F1DFFA43F
+        1D1EA43F1D00A43F1D04A43F1D01A43F1D00A43F1D94A43F1DE9A43F1DFFA43F
+        1D6FA43F1D00A43F1D03A43F1D05A43F1D03A43F1D00A43F1D90A43F1DFFA43F
+        1DD1A43F1D2CA43F1D00A43F1D04A43F1D00A43F1D6FA43F1DFFA43F1DFFA43F
+        1D6EA43F1D00A43F1D03A43F1D00A43F1D00A43F1D00A43F1D00A43F1D85A43F
+        1DFFA43F1DDFA43F1D17A43F1D00A43F1D00A43F1D6FA43F1DFFA43F1DE9A43F
+        1D94A43F1D00A43F1D01A43F1D29A43F1D3CA43F1D09A43F1D00A43F1D00A43F
+        1DA2A43F1DFFA43F1D83A43F1D00A43F1D00A43F1D94A43F1DE9A43F1DA9A43F
+        1DE7A43F1D00A43F1D00A43F1D88A43F1DFFA43F1D9FA43F1D00A43F1D00A43F
+        1DA1A43F1DFFA43F1D8FA43F1D00A43F1D00A43F1DE7A43F1DAAA43F1D3AA43F
+        1DFFA43F1D7CA43F1D00A43F1D27A43F1DF9A43F1DFFA43F1DADA43F1DB4A43F
+        1DFFA43F1DF7A43F1D32A43F1D00A43F1D7DA43F1DFFA43F1D3AA43F1D00A43F
+        1DB0A43F1DFFA43F1D3EA43F1D00A43F1D3FA43F1DCDA43F1DFFA43F1DFFA43F
+        1DBEA43F1D3BA43F1D00A43F1D3EA43F1DFFA43F1DAFA43F1D00A43F1D00A43F
+        1D03A43F1DBDA43F1DFFA43F1D78A43F1D00A43F1D00A43F1D05A43F1D00A43F
+        1D00A43F1D00A43F1D78A43F1DFFA43F1DBDA43F1D03A43F1D00A43F1D05A43F
+        1D00A43F1D04A43F1DA6A43F1DFFA43F1DE9A43F1D8BA43F1D5DA43F1D5FA43F
+        1D8EA43F1DE9A43F1DFFA43F1DA6A43F1D04A43F1D00A43F1D04A43F1D03A43F
+        1D05A43F1D00A43F1D00A43F1D3CA43F1DA0A43F1DE5A43F1DFFA43F1DFFA43F
+        1DE5A43F1DA0A43F1D3CA43F1D00A43F1D00A43F1D05A43F1D03
+      }
+      OnClick = HelpButtonClick
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object AppUpdateLabel: TLabel
+      AnchorSideLeft.Control = HelpButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Panel1
+      AnchorSideTop.Side = asrCenter
+      Cursor = crHandPoint
+      Left = 45
+      Height = 15
+      Top = 9
+      Width = 180
+      BorderSpacing.Left = 15
+      Caption = '  App update available, version:   '
+      Color = clGreen
+      Font.Color = clForm
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      Transparent = False
+      Visible = False
+      OnClick = AppUpdateLabelClick
+    end
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 2000
+    OnTimer = Timer1Timer
+    left = 440
+    top = 16
+  end
+  object LazSerial1: TLazSerial
+    Active = False
+    BaudRate = br__9600
+    DataBits = db8bits
+    Parity = pNone
+    FlowControl = fcNone
+    StopBits = sbOne
+    Device = 'COM1'
+    RcvLineCRLF = False
+    OnRxData = LazSerial1RxData
+    OnStatus = LazSerial1Status
+    left = 312
+    top = 16
+  end
+  object DeviceTimer: TTimer
+    Enabled = False
+    Interval = 2000
+    OnTimer = DeviceTimerTimer
+    left = 408
+    top = 16
+  end
+  object ImageList1: TImageList
+    left = 280
+    top = 16
+    Bitmap = {
+      4C6903000000100000001000000000000000000000000000000000000000269D
+      45FF259D43FF0000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000000000023A0
+      41FF239F40FF209D3EFF00000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000000000021A2
+      41FF1DA13EFF1B9F3AFF1B9C3BFF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001DA3
+      3EFF1AA23BFF17A039FF169D37FF159A35FF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001CA3
+      3DFF16A339FF13A136FF109D33FF0E9931FF109731FF00000000000000000000
+      00000000000000000000000000000000000000000000000000000000000018A4
+      3AFF12A236FF0EA030FF0A9D2EFF09992BFF0A952DFF0D912CFF000000000000
+      00000000000000000000000000000000000000000000000000000000000017A2
+      3AFF10A132FF0B9F2FFF069B2BFF039828FF049428FF089029FF0B8E2CFF0000
+      00000000000000000000000000000000000000000000000000000000000016A1
+      39FF0EA132FF089D2DFF039927FF019525FF009122FF038D24FF078B26FF0E8A
+      2BFF0000000000000000000000000000000000000000000000000000000015A0
+      38FF0D9F31FF069B2BFF019725FF009024FF008B23FF008B21FF048A25FF0A88
+      28FF00000000000000000000000000000000000000000000000000000000169D
+      37FF0E9B31FF06972AFF019425FF008C23FF008820FF008722FF028723FF0000
+      000000000000000000000000000000000000000000000000000000000000169A
+      35FF0E982FFF08952BFF019123FF008B23FF008621FF008521FF000000000000
+      0000000000000000000000000000000000000000000000000000000000001798
+      37FF0F9630FF0A922BFF038E26FF008A21FF008621FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001895
+      36FF119331FF0B8F2AFF068C27FF038924FF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001A92
+      38FF139031FF0E8E2DFF0A8B2AFF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001C91
+      39FF168E34FF128B30FF00000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001E8F
+      3BFF1A8C36FF0000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000269D45FF259D43FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000023A041FF239F40FF209D3EFF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000021A241FF1DA13EFF1B9F3AFF1B9C3BFF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001DA33EFF1AA23BFF17A039FF169D37FF159A35FF000000000000
+      00000000000000000000000000001CA33D321CA33D651CA33D9A1CA33DCD1CA3
+      3DFF000000001CA33DFF16A339FF13A136FF109D33FF0E9931FF109731FF0000
+      00000000000000000000000000001CA33D321CA33D651CA33D9A1CA33DCD1CA3
+      3DFF0000000018A43AFF12A236FF0EA030FF0A9D2EFF09992BFF0A952DFF0D91
+      2CFF0000000000000000000000001CA33D321CA33D651CA33D9A1CA33DCD1CA3
+      3DFF0000000017A23AFF10A132FF0B9F2FFF069B2BFF039828FF049428FF0890
+      29FF0B8E2CFF0000000000000000000000000000000000000000000000000000
+      00000000000016A139FF0EA132FF089D2DFF039927FF019525FF009122FF038D
+      24FF078B26FF0E8A2BFF00000000000000000000000000000000000000000000
+      00000000000015A038FF0D9F31FF069B2BFF019725FF009024FF008B23FF008B
+      21FF048A25FF0A8828FF000000001CA33D321CA33D651CA33D9A1CA33DCD1CA3
+      3DFF00000000169D37FF0E9B31FF06972AFF019425FF008C23FF008820FF0087
+      22FF028723FF00000000000000001CA33D321CA33D651CA33D9A1CA33DCD1CA3
+      3DFF00000000169A35FF0E982FFF08952BFF019123FF008B23FF008621FF0085
+      21FF0000000000000000000000001CA33D321CA33D651CA33D9A1CA33DCD1CA3
+      3DFF00000000179837FF0F9630FF0A922BFF038E26FF008A21FF008621FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000189536FF119331FF0B8F2AFF068C27FF038924FF000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001A9238FF139031FF0E8E2DFF0A8B2AFF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001C9139FF168E34FF128B30FF0000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001E8F3BFF1A8C36FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000003434FDFF3232
+      FFFF3131FFFF2F2FFFFF2B2BFFFF2929FEFF2727F8FF2727F2FF2929EBFF2A2A
+      E4FF0000000000000000000000000000000000000000000000003232FFFF3333
+      FFFF3333FFFF3030FFFF2B2BFFFF2525FFFF2222FDFF2121F6FF2323EEFF2525
+      E6FF0000000000000000000000000000000000000000000000003131FFFF3333
+      FFFF3030FFFF2D2DFFFF2727FFFF2121FFFF1A1AFFFF1A1AF8FF1C1CF0FF1F1F
+      E8FF0000000000000000000000000000000000000000000000002F2FFFFF3030
+      FFFF2D2DFFFF2929FFFF2222FFFF1B1BFFFF1414FFFF1313F9FF1414F1FF1919
+      E9FF0000000000000000000000000000000000000000000000002B2BFFFF2B2B
+      FFFF2727FFFF2222FFFF1C1CFFFF1515FFFF0D0DFFFF0E0EF8FF1010F1FF1414
+      E8FF0000000000000000000000000000000000000000000000002929FEFF2525
+      FFFF2121FFFF1B1BFFFF1515FFFF0D0DFFFF0A0AFDFF0A0AF7FF0B0BEFFF1010
+      E8FF0000000000000000000000000000000000000000000000002727F8FF2222
+      FDFF1A1AFFFF1414FFFF0D0DFFFF0A0AFDFF0707F7FF0707F3FF0A0AECFF0E0E
+      E6FF0000000000000000000000000000000000000000000000002727F2FF2121
+      F6FF1A1AF8FF1313F9FF0E0EF8FF0A0AF7FF0707F3FF0808EDFF0A0AE8FF0F0F
+      E2FF0000000000000000000000000000000000000000000000002929EBFF2323
+      EEFF1C1CF0FF1414F1FF1010F1FF0B0BEFFF0A0AECFF0A0AE8FF0C0CE4FF1111
+      E0FF0000000000000000000000000000000000000000000000002A2AE4FF2525
+      E6FF1F1FE8FF1919E9FF1414E8FF1010E8FF0E0EE6FF0F0FE2FF1111E0FF1414
+      DDFF000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000
+    }
+  end
+  object TrayIcon1: TTrayIcon
+    BalloonHint = 'USB WatchDog window is hided!'
+    BalloonTitle = 'USB WatchDog'
+    PopUpMenu = TrayPopupMenu
+    Hint = 'USB WatchDog'
+    OnDblClick = TrayIcon1DblClick
+    left = 248
+    top = 16
+  end
+  object TrayPopupMenu: TPopupMenu
+    left = 216
+    top = 16
+    object TrayMenuItemRestore: TMenuItem
+      Caption = 'Restore'
+      Default = True
+      OnClick = TrayMenuItemRestoreClick
+    end
+    object TrayMenuSep1: TMenuItem
+      Caption = '-'
+    end
+    object TrayMenuItemExit: TMenuItem
+      Caption = 'Exit'
+      OnClick = TrayMenuItemExitClick
+    end
+  end
+  object ChkUpdateTimer: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = ChkUpdateTimerTimer
+    left = 376
+    top = 16
+  end
+  object ActionList1: TActionList
+    left = 184
+    top = 16
+    object SoftResetAction: TAction
+      Caption = 'Soft Reset [F1]'
+      Enabled = False
+      OnExecute = SoftResetButtonClick
+      ShortCut = 112
+    end
+    object HardResetAction: TAction
+      Caption = 'Hard Reset [F2]'
+      Enabled = False
+      OnExecute = HardResetButtonClick
+      ShortCut = 113
+    end
+    object PowerOffAction: TAction
+      Caption = 'Power OFF [F3]'
+      Enabled = False
+      OnExecute = PowerOffButtonClick
+      ShortCut = 114
+    end
+  end
+end

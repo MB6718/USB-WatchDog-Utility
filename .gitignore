@@ -8,25 +8,20 @@
 # Lazarus compiler-generated binaries (safe to delete)
 *.exe
 *.dll
-*.bpl
-*.bpi
-*.dcp
 *.so
-*.apk
-*.drc
 *.map
-*.dres
-*.rsm
-*.tds
-*.dcu
 *.lib
 *.a
 *.o
 *.ocx
 *.or
-*.ppu
-*.compiled
+
+*.lps
+*.res
+*.bak
+*.ini
 
 # Lazarus work and temp directories
 backup
 lib
+debug
