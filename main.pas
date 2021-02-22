@@ -185,7 +185,10 @@ type
     const ETHWalletAddress = '0x044e4ba3369716158a67f1138cfc84984fb9fd2d';
     const BTCWalletAddress = '3CYsMhTT1qVvRXgJ6gc7kk3NiRnFxjCEJr';
     const SupportEmailAddress = 'support@usbwatchdog.ru';
-    const HelpURL = 'http://usbwatchdog.ru/help';
+    const MainURL = 'http://usbwatchdog.ru';
+    const HelpURL = MainURL + '/help';
+    const DownloadURL = MainURL + '/downloads/';
+    const UpdateURL = MainURL + '/update';
 
     { Config file }
     {$IFDEF UNIX} // -- UNIX --
@@ -433,9 +436,8 @@ end;
 
 procedure TfMain.StartAppUpdate(const FileName: String);
 const
-  DownloadURL = 'http://localhost:5000/downloads/';
   SetupFileName = 'setup.exe';
-  CmdParam = '--silent-update';
+  CmdParam = '/verysilent';
 begin
   try
     fDownload:=TfDownload.Create(Self);
@@ -459,7 +461,6 @@ end;
 
 function TfMain.GetAppUpdates(): TUpdateVersion;
 const
-  URL = 'http://localhost:5000/update';
   JSONPath = 'versions.win.last_stable.';
 var
   FHTTPClient: TFPHTTPClient;
@@ -470,7 +471,7 @@ begin
   with Result do
     try
       try
-        JsonString:=FHTTPClient.Get(URL);
+        JsonString:=FHTTPClient.Get(UpdateURL);
         Logger.Info('Server connection established.');
         if (JsonString <> '') then
           try
