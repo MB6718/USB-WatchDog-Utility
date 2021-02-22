@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  RegExpr, windows, registry, pingsend, LCLIntf, LCLType, ActnList, Log4Pascal,
-  Fpjson, jsonparser, fphttpclient, Types;
+  RegExpr, windows, registry, pingsend, UniqueInstance, LCLIntf, LCLType,
+  ActnList, Log4Pascal, Fpjson, jsonparser, fphttpclient, Types;
 
 type
 
@@ -97,6 +97,7 @@ type
     TrayMenuItemRestore: TMenuItem;
     TrayMenuSep1: TMenuItem;
     TrayPopupMenu: TPopupMenu;
+    UniqueInstance1: TUniqueInstance;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
