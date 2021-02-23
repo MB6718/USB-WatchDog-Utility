@@ -151,7 +151,7 @@ type
     const DfwLabel = 'Device firmware version: ';
     const PingAddressBlank = 'paste here IP or URL address';
     const MinFWVers = $02;
-    const ChkUpdateInterval = 21600000; // 6 hours in ms.
+    const ChkUpdateInterval = 6 * 3600000; //21600000 = 6 hours in ms.
     const clEnabled = $00AA00;
 
     var DeviceConnectionFlag: Boolean;
@@ -163,6 +163,7 @@ type
     var NetHint: THintWindow;
 
     procedure SetRegistryAutorunKey(RunState: TRunState);
+    function ExistRegistryAutorunKey(): Boolean;
     procedure ShowNetEditHint();
     function ValidateURL(const URL: String): Boolean;
     procedure ActivatePingInterface();
@@ -190,6 +191,7 @@ type
     const HelpURL = MainURL + '/help';
     const DownloadURL = MainURL + '/downloads/';
     const UpdateURL = MainURL + '/update';
+    const AutorunKeyPath = '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run';
 
     { Config file }
     {$IFDEF UNIX} // -- UNIX --
@@ -226,20 +228,38 @@ uses
 { TfMain }
 
 procedure TfMain.SetRegistryAutorunKey(RunState: TRunState);
-const
-  KeyPath = '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run';
 var
   R: TRegistry;
 begin
   R:=TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
   with R do begin
+    RootKey:=HKEY_CURRENT_USER;
     try
-      RootKey:=HKEY_CURRENT_USER;
-      OpenKey(KeyPath, False);
+      OpenKey(AutorunKeyPath, False);
       case RunState of
         RunDisable: DeleteValue(AppName);
-        RunEnable: WriteString(AppName, '"' + ExtractFilePath(ParamStr(0)) + '"');
+        RunEnable: WriteString(AppName,
+          '"' + ExtractFilePath(ParamStr(0)) + ExtractFileName(ParamStr(0)) + '"');
       end;
+    finally
+      CloseKey;
+      Free;
+    end;
+  end;
+end;
+
+function TfMain.ExistRegistryAutorunKey(): Boolean;
+var
+  R: TRegistry;
+begin
+  Result:=False;
+  R:=TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
+  with R do begin
+    RootKey:=HKEY_CURRENT_USER;
+    try
+      OpenKeyReadOnly(AutorunKeyPath);
+      if ValueExists(AppName) then
+        Result:=True;
     finally
       CloseKey;
       Free;
@@ -806,10 +826,16 @@ begin
     CheckBox1.Checked:=True;
     PostMessage(Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
   end;
-  if LaunchWithOS then
-    CheckBox2.Checked:=True
+  if ExistRegistryAutorunKey() then begin
+    CheckBox2.Checked:=True;
+    if not LaunchWithOS then
+      LaunchWithOS:=True;
+  end
   else
-    SetRegistryAutorunKey(RunDisable);
+    if LaunchWithOS then
+      CheckBox2.Checked:=True
+    else
+      CheckBox2.Checked:=False;
   if NetAddress <> '' then
     NetAddressEdit.Text:=NetAddress;
   if PingTimeOut > 0 then
