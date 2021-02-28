@@ -98,15 +98,31 @@ The utility interface is divided by the tab bar method into several sections tha
 
 ## Compilation <a name="compile"></a>
 Step-by-step instructions for compiling and running the application:
-* for Windows
-    1. Make sure that the latest (or at least version 1.8.4) version of the Lazarus IDE is installed on the system.
-    2. Make sure that the required components and packages from the list of project dependencies have been added to the environment.
-    3. Download the archive with the source code and unpack it to any convenient folder or clone the repository to your local machine.
-    4. Open the project file `usbwd.lpr`.
-    5. If the IDE did not find any errors when opening the project, select the Clean and Build item in the Run menu. After that, the project should successfully compile, which will be evidenced by the corresponding inscription in the IDE message window. But if it doesn't, carefully repeat steps 1 through 5.
-    6. After successful compilation of the project, the last step is left, launching the application. Congratulations, the project is assembled and ready to go.
-* for Linux (Debian based - Ubuntu and etc.)
-    1. While this feature is not available. Porting to this OS is in progress.
+
+- for Windows
+  1. Make sure that the latest (or at least version 1.8.4) version of the Lazarus IDE is installed on the system.
+  2. Make sure that the required components and packages from the list of project dependencies have been added to the environment.
+  3. Download the archive with the source code and unpack it to any convenient folder or clone the repository to your local machine.
+  4. Build the project in the following way:
+    - Building in graphical (GUI) mode.
+      - Open the project file `usbwd.lpr`.
+      - If the IDE did not find any errors when opening the project, follow these steps:
+        - Find on the toolbar the button `Change build mode`, in the drop-down list of which there are four options for building the project. Two levels of `Debug` and two levels of ` Release`, each of which is for a different platform (x86 - x64). Select the `Release` mode with your platform index. 
+        - Then in the menu `Run` select the item ` Clean and build`. After that, the project should successfully compile, which will be evidenced by the corresponding inscription in the IDE message window. But if it doesn't, carefully repeat steps 1 through 5.
+    - Building in console mode.
+      - To build using the OS command line, the project has a `make.cmd` script.
+      - **Important!** For the script to work, the OS must "know" about the path to the directory with the Lazarus IDE. The path is written to the OS environment variables.
+      - Available script modes:  
+      `--help` Show help message.  
+      `--build-all` Build the project for all (available in the project) platforms.  
+      `--build-x86` Build a project for the x86 platform.  
+      `--build-x64` Build a project for x64 platform.  
+      `--clean` Clean the project from executable and all auxiliary files.
+      - An example of building with a script: `make.cmd --build-all`.
+  5. After successful compilation of the project, the last step is left, launching the application. Congratulations, the project is assembled and ready to go.
+
+- for Linux (Debian based - Ubuntu and etc.)
+  1. While this feature is not available. Porting to this OS is in progress.
 <p align="right"><a href="#top">[ Top ]</a></p>
 
 ## Protocol specification: <a name="protocolspec"></a>
@@ -248,11 +264,12 @@ Chips, ideas and features that the goal is to implement in the next versions of 
 
 Other dependent modules and packages used in the project:
 
-- [FCL 1.0.1](https://wiki.freepascal.org/FCL/) - version 1.0.1 and higher
-- [LCL 1.8.4](https://wiki.freepascal.org/LCL) - version 1.8.4 and higher
-- [Synapse 40.1 (laz_synapse)](http://www.ararat.cz/synapse/doku.php/start) - version 40.1 and higher
-- [LazSerialPort 0.2](https://github.com/JurassicPork/TLazSerial) - version 0.2 and higher
+- [FCL 1.0.1](https://wiki.freepascal.org/FCL/) - version 1.0.1 or higher
+- [LCL 1.8.4](https://wiki.freepascal.org/LCL) - version 1.8.4 or higher
+- [Synapse 40.1 (laz_synapse)](http://www.ararat.cz/synapse/doku.php/start) - version 40.1 or higher
+- [LazSerialPort 0.2](https://github.com/JurassicPork/TLazSerial) - version 0.2 or higher
 - [Log4Pascal](https://github.com/martinusso/log4pascal) - Adapted version (original from the module author's link)
+- [UniqueInstance](https://github.com/blikblum/luipack/tree/master/uniqueinstance) - version 1.1 or higher
 <p align="right"><a href="#top">[ Top ]</a></p>
 
 ## Authors <a name="authors"></a>

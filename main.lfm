@@ -1337,4 +1337,10 @@ object fMain: TfMain
       ShortCut = 114
     end
   end
+  object UniqueInstance1: TUniqueInstance
+    Enabled = True
+    Identifier = 'USB WatchDog'
+    left = 152
+    top = 16
+  end
 end

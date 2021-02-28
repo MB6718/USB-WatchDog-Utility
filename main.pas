@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, StdCtrls, Buttons, Clipbrd, Menus, LazSerial, LazSynaSer,
-  RegExpr, windows, registry, pingsend, LCLIntf, LCLType, ActnList, Log4Pascal,
-  Fpjson, jsonparser, fphttpclient, Types;
+  RegExpr, windows, registry, pingsend, UniqueInstance, LCLIntf, LCLType,
+  ActnList, Log4Pascal, Fpjson, jsonparser, fphttpclient, Types;
 
 type
 
@@ -97,6 +97,7 @@ type
     TrayMenuItemRestore: TMenuItem;
     TrayMenuSep1: TMenuItem;
     TrayPopupMenu: TPopupMenu;
+    UniqueInstance1: TUniqueInstance;
     WaitingSecLabel: TLabel;
     WaitingTimeGroupBox: TGroupBox;
     WaitingTimeTrackBar: TTrackBar;
@@ -150,7 +151,7 @@ type
     const DfwLabel = 'Device firmware version: ';
     const PingAddressBlank = 'paste here IP or URL address';
     const MinFWVers = $02;
-    const ChkUpdateInterval = 21600000; // 6 hours in ms.
+    const ChkUpdateInterval = 6 * 3600000; //21600000 = 6 hours in ms.
     const clEnabled = $00AA00;
 
     var DeviceConnectionFlag: Boolean;
@@ -162,6 +163,7 @@ type
     var NetHint: THintWindow;
 
     procedure SetRegistryAutorunKey(RunState: TRunState);
+    function ExistRegistryAutorunKey(): Boolean;
     procedure ShowNetEditHint();
     function ValidateURL(const URL: String): Boolean;
     procedure ActivatePingInterface();
@@ -185,7 +187,11 @@ type
     const ETHWalletAddress = '0x044e4ba3369716158a67f1138cfc84984fb9fd2d';
     const BTCWalletAddress = '3CYsMhTT1qVvRXgJ6gc7kk3NiRnFxjCEJr';
     const SupportEmailAddress = 'support@usbwatchdog.ru';
-    const HelpURL = 'http://usbwatchdog.ru/help';
+    const MainURL = 'http://usbwatchdog.ru';
+    const HelpURL = MainURL + '/help';
+    const DownloadURL = MainURL + '/downloads/';
+    const UpdateURL = MainURL + '/update';
+    const AutorunKeyPath = '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run';
 
     { Config file }
     {$IFDEF UNIX} // -- UNIX --
@@ -222,20 +228,38 @@ uses
 { TfMain }
 
 procedure TfMain.SetRegistryAutorunKey(RunState: TRunState);
-const
-  KeyPath = '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run';
 var
   R: TRegistry;
 begin
   R:=TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
   with R do begin
+    RootKey:=HKEY_CURRENT_USER;
     try
-      RootKey:=HKEY_CURRENT_USER;
-      OpenKey(KeyPath, False);
+      OpenKey(AutorunKeyPath, False);
       case RunState of
         RunDisable: DeleteValue(AppName);
-        RunEnable: WriteString(AppName, '"' + ExtractFilePath(ParamStr(0)) + '"');
+        RunEnable: WriteString(AppName,
+          '"' + ExtractFilePath(ParamStr(0)) + ExtractFileName(ParamStr(0)) + '"');
       end;
+    finally
+      CloseKey;
+      Free;
+    end;
+  end;
+end;
+
+function TfMain.ExistRegistryAutorunKey(): Boolean;
+var
+  R: TRegistry;
+begin
+  Result:=False;
+  R:=TRegistry.Create(KEY_ALL_ACCESS or KEY_WOW64_64KEY);
+  with R do begin
+    RootKey:=HKEY_CURRENT_USER;
+    try
+      OpenKeyReadOnly(AutorunKeyPath);
+      if ValueExists(AppName) then
+        Result:=True;
     finally
       CloseKey;
       Free;
@@ -433,9 +457,8 @@ end;
 
 procedure TfMain.StartAppUpdate(const FileName: String);
 const
-  DownloadURL = 'http://localhost:5000/downloads/';
   SetupFileName = 'setup.exe';
-  CmdParam = '--silent-update';
+  CmdParam = '/verysilent';
 begin
   try
     fDownload:=TfDownload.Create(Self);
@@ -459,7 +482,6 @@ end;
 
 function TfMain.GetAppUpdates(): TUpdateVersion;
 const
-  URL = 'http://localhost:5000/update';
   JSONPath = 'versions.win.last_stable.';
 var
   FHTTPClient: TFPHTTPClient;
@@ -470,7 +492,7 @@ begin
   with Result do
     try
       try
-        JsonString:=FHTTPClient.Get(URL);
+        JsonString:=FHTTPClient.Get(UpdateURL);
         Logger.Info('Server connection established.');
         if (JsonString <> '') then
           try
@@ -804,10 +826,16 @@ begin
     CheckBox1.Checked:=True;
     PostMessage(Handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
   end;
-  if LaunchWithOS then
-    CheckBox2.Checked:=True
+  if ExistRegistryAutorunKey() then begin
+    CheckBox2.Checked:=True;
+    if not LaunchWithOS then
+      LaunchWithOS:=True;
+  end
   else
-    SetRegistryAutorunKey(RunDisable);
+    if LaunchWithOS then
+      CheckBox2.Checked:=True
+    else
+      CheckBox2.Checked:=False;
   if NetAddress <> '' then
     NetAddressEdit.Text:=NetAddress;
   if PingTimeOut > 0 then
