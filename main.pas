@@ -799,6 +799,7 @@ begin
 
   { App Load Config section }
   ReadAppConfigs(ConfFile);
+  WaitingTimeTrackBar.Position:=ResetTimeout div 10;
   if USBPwrMode > 0 then begin
     PowerModeRadioGroup.ItemIndex:=USBPwrMode;
     PowerOffButton.Enabled:=True;
