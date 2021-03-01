@@ -140,6 +140,8 @@ type
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure TrayMenuItemExitClick(Sender: TObject);
     procedure TrayMenuItemRestoreClick(Sender: TObject);
+    procedure UniqueInstance1OtherInstance(Sender: TObject;
+      ParamCount: Integer; const Parameters: array of String);
     procedure WaitingTimeTrackBarChange(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
@@ -641,6 +643,21 @@ begin
   TrayIcon1DblClick(Self);
 end;
 
+procedure TfMain.UniqueInstance1OtherInstance(Sender: TObject; ParamCount: Integer;
+  const Parameters: array of String);
+begin
+  BringToFront;
+  if TrayIcon1.Visible then begin
+    TrayIcon1.Visible:=False;
+    WindowState:=wsNormal;
+    Show;
+  end else begin
+    FormStyle:=fsSystemStayOnTop;
+    FormStyle:=fsNormal;
+    WindowState:=wsNormal;
+  end;
+end;
+
 procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
 begin
   WaitingSecLabel.Caption:=IntToStr(WaitingTimeTrackBar.Position * 10) + ' sec';
@@ -799,6 +816,7 @@ begin
 
   { App Load Config section }
   ReadAppConfigs(ConfFile);
+  WaitingTimeTrackBar.Position:=ResetTimeout div 10;
   if USBPwrMode > 0 then begin
     PowerModeRadioGroup.ItemIndex:=USBPwrMode;
     PowerOffButton.Enabled:=True;
@@ -844,33 +862,26 @@ begin
   if AutoChkUpdates then
     CheckBox3.Checked:=True;
 
-  PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
-  Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
-  Logger.Info('Ports: ' + PortSelectorComboBox.Items.Text.Replace(LineEnding, ', '));
-  if PortSelectorComboBox.Items.Count > 0 then begin
-    PortSelectorComboBox.ItemIndex:=0;
-    if DefaultPort <> '' then begin
-      CheckBox7.Checked:=True;
-      for i:=0 to PortSelectorComboBox.Items.Count - 1 do
-        if DefaultPort = PortSelectorComboBox.Items[i] then begin
-          PortSelectorComboBox.ItemIndex:=i;
-          Logger.Info('Selected default port: ' + DefaultPort);
-          if CheckBox8.Checked then
-            StartStopButtonClick(Self);
-          Break;
-        end;
-        if (i = PortSelectorComboBox.Items.Count - 1) and
-           (DefaultPort <> PortSelectorComboBox.Items[i]) then begin
-          MessageDlg(
-            'Error COM port',
-            'Port "' + DefaultPort + '" not exist, please select other port',
-            mtError, [mbOK], 0);
-          PortSelectorComboBox.Text:=DefaultPort;
-          Logger.Error('Port "' + DefaultPort + '" not exist');
-        end;
-    end;
-    StartStopButton.Enabled:=True;
-    IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
+  ReScanButtonClick(Self);
+  if (DefaultPort <> '') and (PortSelectorComboBox.Items.Count > 0) then begin
+    CheckBox7.Checked:=True;
+    for i:=0 to PortSelectorComboBox.Items.Count - 1 do
+      if DefaultPort = PortSelectorComboBox.Items[i] then begin
+        PortSelectorComboBox.ItemIndex:=i;
+        Logger.Info('Selected default port: ' + DefaultPort);
+        if CheckBox8.Checked then
+          StartStopButtonClick(Self);
+        Break;
+      end;
+      if (i = PortSelectorComboBox.Items.Count - 1) and
+         (DefaultPort <> PortSelectorComboBox.Items[i]) then begin
+        MessageDlg(
+          'Error COM port',
+          'Port "' + DefaultPort + '" not exist, please select other port',
+          mtError, [mbOK], 0);
+        PortSelectorComboBox.Text:=DefaultPort;
+        Logger.Error('Port "' + DefaultPort + '" not exist');
+      end;
   end;
 end;
 
@@ -999,8 +1010,7 @@ begin { TODO : Очищать буфер во время ожидания Remain
             try
               case CustomMsgDlg.ShowDialog of
                 mrOK, mrYes: AppUpdateLabelClick(Self);
-                mrIgnore: { nop } ; //ShowMessage('Pushed by: Basic');
-                mrCancel: { nop } ; //ShowMessage('Pushed by: Cancel')
+                mrIgnore, mrCancel: { nop - default the basic function } ;
               end;
             finally
               CustomMsgDlg.Free;
@@ -1065,8 +1075,16 @@ end;
 procedure TfMain.ReScanButtonClick(Sender: TObject);
 begin
   PortSelectorComboBox.Items.CommaText:=GetSerialPortNames();
-  if PortSelectorComboBox.Items.Count > 0 then
+  Logger.Info('Finded ports: ' + IntToStr(PortSelectorComboBox.Items.Count));
+  Logger.Info('Ports: ' + PortSelectorComboBox.Items.Text.Replace(LineEnding, ', '));
+  if PortSelectorComboBox.Items.Count > 0 then begin
     PortSelectorComboBox.ItemIndex:=0;
+    StartStopButton.Enabled:=True;
+    IndicatorShape.Brush.Color:=RGBToColor(221, 0, 0);  // red
+  end else begin
+    StartStopButton.Enabled:=False;
+    IndicatorShape.Brush.Color:=clSilver;
+  end;
 end;
 
 procedure TfMain.SoftResetButtonClick(Sender: TObject);
