@@ -1340,6 +1340,7 @@ object fMain: TfMain
   object UniqueInstance1: TUniqueInstance
     Enabled = True
     Identifier = 'USB WatchDog'
+    OnOtherInstance = UniqueInstance1OtherInstance
     left = 152
     top = 16
   end

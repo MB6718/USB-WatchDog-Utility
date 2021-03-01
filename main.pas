@@ -140,6 +140,8 @@ type
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure TrayMenuItemExitClick(Sender: TObject);
     procedure TrayMenuItemRestoreClick(Sender: TObject);
+    procedure UniqueInstance1OtherInstance(Sender: TObject;
+      ParamCount: Integer; const Parameters: array of String);
     procedure WaitingTimeTrackBarChange(Sender: TObject);
     procedure WalletsLabelClick(Sender: TObject);
     procedure WalletsLabelMouseLeave(Sender: TObject);
@@ -639,6 +641,21 @@ end;
 procedure TfMain.TrayMenuItemRestoreClick(Sender: TObject);
 begin
   TrayIcon1DblClick(Self);
+end;
+
+procedure TfMain.UniqueInstance1OtherInstance(Sender: TObject; ParamCount: Integer;
+  const Parameters: array of String);
+begin
+  BringToFront;
+  if TrayIcon1.Visible then begin
+    TrayIcon1.Visible:=False;
+    WindowState:=wsNormal;
+    Show;
+  end else begin
+    FormStyle:=fsSystemStayOnTop;
+    FormStyle:=fsNormal;
+    WindowState:=wsNormal;
+  end;
 end;
 
 procedure TfMain.WaitingTimeTrackBarChange(Sender: TObject);
