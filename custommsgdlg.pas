@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Dialogs, Controls, ExtCtrls, Buttons, StdCtrls, Graphics,
-  windows;
+  LCLIntf;
 
 const
   TimeMark = True;
@@ -218,7 +218,7 @@ begin
   Canvas:=TCanvas.Create;
   with Canvas do
     try
-      Handle:=GetWindowDC(HWND);
+      Handle:=GetDC(HWND);
       Font:=aFont;
       Result:=TextWidth(SubString);
     finally

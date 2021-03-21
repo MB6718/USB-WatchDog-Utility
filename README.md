@@ -109,19 +109,20 @@ Step-by-step instructions for compiling and running the application:
       - If the IDE did not find any errors when opening the project, follow these steps:
         - Find on the toolbar the button `Change build mode`, in the drop-down list of which there are four options for building the project. Two levels of `Debug` and two levels of ` Release`, each of which is for a different platform (x86 - x64). Select the `Release` mode with your platform index. 
         - Then in the menu `Run` select the item ` Clean and build`. After that, the project should successfully compile, which will be evidenced by the corresponding inscription in the IDE message window. But if it doesn't, carefully repeat steps 1 through 5.
-    - Building in console mode.
-      - To build using the OS command line, the project has a `make.cmd` script.
-      - **Important!** For the script to work, the OS must "know" about the path to the directory with the Lazarus IDE. The path is written to the OS environment variables.
+    - Building in console (CLI) mode.
+      - To build using the OS command line, the project has a `build.cmd` script.
+      - **Important!** For the script to work, the OS must "know" about the path to the directory with the Lazarus IDE and the path with the FPC compiler (strip utility). The paths are written to the OS environment variables.
       - Available script modes:  
       `--help` Show help message.  
       `--build-all` Build the project for all (available in the project) platforms.  
       `--build-x86` Build a project for the x86 platform.  
       `--build-x64` Build a project for x64 platform.  
       `--clean` Clean the project from executable and all auxiliary files.
-      - An example of building with a script: `make.cmd --build-all`.
+      - An example of building with a script: `build.cmd --build-all`.
   5. After successful compilation of the project, the last step is left, launching the application. Congratulations, the project is assembled and ready to go.
 
 - for Linux (Debian based - Ubuntu and etc.)
+  
   1. While this feature is not available. Porting to this OS is in progress.
 <p align="right"><a href="#top">[ Top ]</a></p>
 

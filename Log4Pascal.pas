@@ -73,8 +73,7 @@ implementation
 
 uses
   Forms,
-  SysUtils,
-  Windows;
+  SysUtils;
 
 const
   FORMAT_LOG = '%s %s';
@@ -126,10 +125,10 @@ end;
 
 procedure TLogger.Debug(const Msg: String);
 begin
-  {{$WARN SYMBOL_PLATFORM OFF}
-  if DebugHook = 0 then
-    Exit;
-  {$WARN SYMBOL_PLATFORM ON}}
+  //{$WARN SYMBOL_PLATFORM OFF}
+  //if DebugHook = 0 then
+  //  Exit;
+  //{$WARN SYMBOL_PLATFORM ON}
 
   if not (ltDebug in FQuietTypes) then
     Self.Write(Format(FORMAT_LOG, [PREFIX_DEBUG, Msg]));

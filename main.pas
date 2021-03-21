@@ -194,17 +194,16 @@ type
     const DownloadURL = MainURL + '/downloads/';
     const UpdateURL = MainURL + '/update';
     const AutorunKeyPath = '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run';
-
-    { Config file }
-    {$IFDEF UNIX} // -- UNIX --
+    {$IFDEF UNIX}
       {$IFDEF LINUX}
         const ConfFile = 'usbwd.conf';
+        const LogFile = 'usbwd.log';
       {$ENDIF}
     {$ENDIF}
-    {$IFDEF WINDOWS} // -- WINDOWS --
+    {$IFDEF WINDOWS}
       const ConfFile = 'config.ini';
+      const LogFile = 'Log.log';
     {$ENDIF}
-    const LogFile = 'Log.log';
 
     { Command list }
     const cmdHardReset = $FE;
@@ -484,7 +483,14 @@ end;
 
 function TfMain.GetAppUpdates(): TUpdateVersion;
 const
+{$IFDEF UNIX}
+  {$IFDEF LINUX}
+    JSONPath = 'versions.nix.last_stable.';
+  {$ENDIF}
+{$ENDIF}
+{$IFDEF WINDOWS}
   JSONPath = 'versions.win.last_stable.';
+{$ENDIF}
 var
   FHTTPClient: TFPHTTPClient;
   JsonString: String;
